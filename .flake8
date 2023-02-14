@@ -1,0 +1,16 @@
+[flake8]
+max-line-length = 120
+exclude =
+    README.md
+    models/__init__.py
+    .flake8
+    mypy.ini
+    Dockerfile
+    docker-compose.yml
+    .gitignore
+    requirements.txt
+    .pre-commit-config.yaml
+    .env
+    venv/,
+    env/,
+    __innit__.py
