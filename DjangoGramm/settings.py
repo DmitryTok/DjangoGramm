@@ -7,7 +7,7 @@ SECRET_KEY = 'django-insecure-qzb1y40)_a5q9#lf*hf_$lcbp+srju)7%(ussgj8+vc06uhw2r
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -16,6 +16,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'users'
 ]
 
 MIDDLEWARE = [
@@ -52,9 +53,9 @@ DATABASES = {
     'default': {
         'ENGINE': env.get('DB_ENGINE', default='django.db.backends.postgresql'),
         'NAME': env.get('DB_NAME', default='djangogramm'),
-        'USER': env.get('DB_USER', default='postgres'),
-        'PASSWORD': env.get('DB_PASSWORD', default='password'),
-        'HOST': env.get('DB_HOST', default='db'),
+        'USER': env.get('DB_USER', default='dmitry_tok'),
+        'PASSWORD': env.get('DB_PASSWORD', default='postgres'),
+        'HOST': env.get('DB_HOST', default='localhost'),
         'PORT': env.get('DB_PORT', default=5432),
     }
 }
@@ -73,6 +74,8 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+AUTH_USER_MODEL = 'users.DGUser'
 
 LANGUAGE_CODE = 'en-us'
 

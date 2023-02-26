@@ -5,25 +5,31 @@ services:
     image: postgres:13
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: dmitry_tok
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: djangogramm
     volumes:
-      - app:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data/
     ports:
       - "5432:5432"
-
+    networks:
+      - mynetwork
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code
+      - .:/app
     ports:
       - "8000:8000"
     depends_on:
       - db
-    environment:
-      DATABASE_URL: postgresql://postgres:password@db:5432/djangogramm
+    networks:
+      mynetwork:
+        aliases:
+          - application
 
 volumes:
-  app:
+  db_data:
+
+networks:
+  mynetwork:
+    driver: bridge

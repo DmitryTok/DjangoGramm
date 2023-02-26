@@ -1,9 +1,11 @@
-FROM python:3
+FROM python:alpine
 
-WORKDIR code/
+WORKDIR /app
 
-COPY requirements.txt /code/
+COPY requirements.txt /app
 
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN pip install --upgrade pip && pip install -r requirements.txt --no-cache-dir
 
-COPY . /code/
+COPY . .
+
+CMD ["python3", "manage.py", "runserver"]
