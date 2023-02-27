@@ -11,7 +11,7 @@ repos:
        language: system
      - id: mypy
        name: mypy
-       entry: mypy . --ignore-missing-imports
+       entry: mypy . --explicit-package-bases
        pass_filenames: false
        language: system
        types: [python]

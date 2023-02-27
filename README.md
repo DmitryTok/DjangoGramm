@@ -11,10 +11,12 @@ DB_PORT=<...> # port for conection to data base
 ```
 
 #### Run container
-1. docker-compose up -d db
-2. docker-compose run web python manage.py makemigrations
-3. docker-compose run web python manage.py migrate
-4. docker-compose run web python manage.py runserver
-
+```
+docker-compose up --build
+```
 #### Stop container with this command
+```
 docker-compose down -v
+```
+
+## Server will be avalable at this adress: http://localhost:8000/
