@@ -55,7 +55,7 @@ DATABASES = {
         'NAME': env.get('DB_NAME', default='djangogramm'),
         'USER': env.get('DB_USER', default='dmitry_tok'),
         'PASSWORD': env.get('DB_PASSWORD', default='postgres'),
-        'HOST': env.get('DB_HOST', default='localhost'),
+        'HOST': env.get('DB_HOST', default='db'),
         'PORT': env.get('DB_PORT', default=5432),
     }
 }
