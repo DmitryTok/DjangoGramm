@@ -21,3 +21,7 @@ makemigrations: db
 .PHONY: migrate
 migrate: makemigrations
 	docker-compose run web python manage.py migrate
+
+.PHONY: sueruser
+superuser: migrate
+	docker-compose run web python manage.py createsuperuser

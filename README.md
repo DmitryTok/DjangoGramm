@@ -10,13 +10,13 @@ DB_HOST=<...> # name of the servise (container)
 DB_PORT=<...> # port for conection to data base
 ```
 
-#### Run container
+#### Make migrations in database
 ```
-docker-compose up --build
+make migrate
 ```
-#### Stop container with this command
+#### After migrations run container
 ```
-docker-compose down -v
+make up
 ```
 
 ## Server will be avalable at this adress: http://localhost:8000/
