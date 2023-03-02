@@ -3,7 +3,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-qzb1y40)_a5q9#lf*hf_$lcbp+srju)7%(ussgj8+vc06uhw2r'
+SECRET_KEY = env.get('SECRET_KEY')
 
 DEBUG = True
 
@@ -51,12 +51,12 @@ WSGI_APPLICATION = 'DjangoGramm.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': env.get('DB_ENGINE', default='django.db.backends.postgresql'),
-        'NAME': env.get('DB_NAME', default='djangogramm'),
-        'USER': env.get('DB_USER', default='dmitry_tok'),
-        'PASSWORD': env.get('DB_PASSWORD', default='postgres'),
-        'HOST': env.get('DB_HOST', default='db'),
-        'PORT': env.get('DB_PORT', default=5432),
+        'ENGINE': env.get('DB_ENGINE'),
+        'NAME': env.get('DB_NAME'),
+        'USER': env.get('DB_USER'),
+        'PASSWORD': env.get('DB_PASSWORD'),
+        'HOST': env.get('DB_HOST'),
+        'PORT': env.get('DB_PORT'),
     }
 }
 

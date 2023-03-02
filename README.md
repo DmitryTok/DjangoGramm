@@ -12,7 +12,7 @@ DB_PORT=<...> # port for conection to data base
 
 #### Make migrations in database
 ```
-make migrate
+make superuser
 ```
 #### After migrations run container
 ```

@@ -6,7 +6,7 @@ run_app:
 up:
 	docker-compose up
 
-.PHONY: run_docker-compose_file
+.PHONY: close_docker-compose_file
 down:
 	docker-compose down -v
 
@@ -14,14 +14,24 @@ down:
 db:
 	docker-compose up -d db
 
-.PHONY: makemigrations
 makemigrations: db
 	docker-compose run web python manage.py makemigrations
 
-.PHONY: migrate
 migrate: makemigrations
 	docker-compose run web python manage.py migrate
 
-.PHONY: sueruser
+.PHONY: superuser
 superuser: migrate
 	docker-compose run web python manage.py createsuperuser
+
+.PHONY: flake8
+flake8:
+	 docker-compose run web flake8 --exclude=./venv/
+
+.PHONY: isort
+isort:
+	docker-compose run web isort .
+
+.PHONY: mypy
+mypy:
+	docker-compose run web mypy . --explicit-package-bases
