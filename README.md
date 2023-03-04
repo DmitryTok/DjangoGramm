@@ -10,13 +10,13 @@ DB_HOST=<...> # name of the servise (container)
 DB_PORT=<...> # port for conection to data base
 ```
 
-#### Make migrations in database
+#### Create a superuser
 ```
 make superuser
 ```
-#### After migrations run container
+#### After superuser run container
 ```
 make up
 ```
 
-## Server will be avalable at this adress: http://localhost:8000/
+## Server will be available at this address: http://localhost:8000/
