@@ -14,7 +14,7 @@ services:
     networks:
       - mynetwork
   web:
-    image: 258647/djangogramm:v1
+    image: 258647/djangogramm
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app

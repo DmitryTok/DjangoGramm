@@ -1,7 +1,7 @@
 from django.urls import include, path
 from django.views.generic import TemplateView
 
-from users.views import CustomLoginView, EmailVerify, Register
+from users.views import CustomLoginView, EmailVerify, Profile, Register
 
 urlpatterns = [
     path('login/', CustomLoginView.as_view(), name='login'),
@@ -17,6 +17,7 @@ urlpatterns = [
         name='verify_email'
     ),
     path('register/', Register.as_view(), name='register'),
+    path('profile/', Profile.as_view(), name='profile'),
     path(
         'confirm_email/',
         TemplateView.as_view(template_name='registration/confirm_email.html'),

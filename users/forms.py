@@ -22,7 +22,7 @@ class CustomAuthenticationForm(AuthenticationForm):
             if not self.user_cache.is_email_verify:
                 send_email_for_verify(self.request, self.user_cache)
                 raise ValidationError(
-                    'Email not verify, check your email',
+                    'Email is not verify, please check your email address',
                     code='invalid_login',
                 )
             if self.user_cache is None:
@@ -43,3 +43,22 @@ class UserRegisterForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ('username', 'email')
+
+
+class ProfileForm(forms.ModelForm):
+    full_name = forms.CharField(max_length=70)
+    bio = forms.CharField(max_length=1200)
+    avatar = forms.ImageField()
+
+    class Meta:
+        model = User
+        fields = ('full_name', 'bio', 'avatar')
+        labels = {
+            'full_name': 'Your full name',
+            'bio': 'Few interesting things about you',
+            'avatar': 'Your avatar image'}
+        help_texts = {
+            'full_name': 'Enter full name',
+            'bio': 'Enter bio',
+            'avatar': 'Upload avatar'
+        }

@@ -7,14 +7,14 @@ from django.shortcuts import redirect, render
 from django.utils.http import urlsafe_base64_decode
 from django.views import View
 
-from users.forms import CustomAuthenticationForm, UserRegisterForm
+from users.forms import CustomAuthenticationForm, ProfileForm, UserRegisterForm
 from users.utils import send_email_for_verify
 
 User = get_user_model()
 
 
 class CustomLoginView(LoginView):
-    form_class = CustomAuthenticationForm
+    form_class = CustomAuthenticationForm()
 
 
 class EmailVerify(View):
@@ -25,13 +25,12 @@ class EmailVerify(View):
             user.is_email_verify = True
             user.save()
             login(request, user)
-            return redirect('index')
+            return redirect('profile')
         return redirect('invalid_verify')
 
     @staticmethod
     def get_user(uidb64):
         try:
-            # urlsafe_base64_decode() decodes to bytestring
             uid = urlsafe_base64_decode(uidb64).decode()
             user = User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError,
@@ -41,7 +40,6 @@ class EmailVerify(View):
 
 
 class Register(View):
-
     template_name = 'registration/register.html'
 
     def get(self, request):
@@ -55,11 +53,34 @@ class Register(View):
 
         if form.is_valid():
             form.save()
-            username = form.cleaned_data.get('username')
+            username = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=password)
             send_email_for_verify(request, user)
             return redirect('confirm_email')
+        context = {
+            'form': form
+        }
+        return render(request, self.template_name, context)
+
+
+class Profile(View):
+    template_name = 'registration/profile.html'
+
+    def get(self, request):
+        context = {
+            'form': ProfileForm()
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        form = ProfileForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('index')
+        else:
+            form = ProfileForm()
         context = {
             'form': form
         }
