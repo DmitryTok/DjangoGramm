@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.exceptions import ValidationError
+from django.forms import EmailInput, FileInput, Textarea, TextInput
 from django.utils.translation import gettext_lazy as _
 
 from users.utils import send_email_for_verify
@@ -37,7 +38,7 @@ class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(
         label=_('Email'),
         max_length=254,
-        widget=forms.EmailInput(attrs={'autocomlete': 'email'})
+        widget=EmailInput(attrs={'autocomlete': 'email'})
     )
 
     class Meta(UserCreationForm.Meta):
@@ -46,19 +47,14 @@ class UserRegisterForm(UserCreationForm):
 
 
 class ProfileForm(forms.ModelForm):
-    full_name = forms.CharField(max_length=70)
-    bio = forms.CharField(max_length=1200)
-    avatar = forms.ImageField()
 
     class Meta:
         model = User
-        fields = ('full_name', 'bio', 'avatar')
-        labels = {
-            'full_name': 'Your full name',
-            'bio': 'Few interesting things about you',
-            'avatar': 'Your avatar image'}
-        help_texts = {
-            'full_name': 'Enter full name',
-            'bio': 'Enter bio',
-            'avatar': 'Upload avatar'
+        fields = ('full_name', 'bio')
+        widgets = {
+            'username': TextInput(attrs={'class': 'form-control'}),
+            'first_name': TextInput(attrs={'class': 'form-control'}),
+            'last_name': TextInput(attrs={'class': 'form-control'}),
+            'bio': Textarea(attrs={'class': 'form-control'}),
+            'avatar': FileInput(attrs={'class': 'form-control-file'}),
         }

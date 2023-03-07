@@ -3,7 +3,7 @@
 {% block content %}
     <h1>Add some more info</h1>
     <hr>
-    <form action="{% url 'profile' %}" method="post" class="text-break">
+    <form action="{% url 'profile_settings' %}" method="post" enctype="multipart/form-data">
         {{ form.as_p }}
         {% csrf_token %}
     <button type="submit" class="btn btn-success">Submit</button>

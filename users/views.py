@@ -7,6 +7,7 @@ from django.shortcuts import redirect, render
 from django.utils.http import urlsafe_base64_decode
 from django.views import View
 
+from djangogramm_app.models import Avatar
 from users.forms import CustomAuthenticationForm, ProfileForm, UserRegisterForm
 from users.utils import send_email_for_verify
 
@@ -14,7 +15,7 @@ User = get_user_model()
 
 
 class CustomLoginView(LoginView):
-    form_class = CustomAuthenticationForm()
+    form_class = CustomAuthenticationForm
 
 
 class EmailVerify(View):
@@ -25,7 +26,7 @@ class EmailVerify(View):
             user.is_email_verify = True
             user.save()
             login(request, user)
-            return redirect('profile')
+            return redirect('profile_settings')
         return redirect('invalid_verify')
 
     @staticmethod
@@ -64,8 +65,8 @@ class Register(View):
         return render(request, self.template_name, context)
 
 
-class Profile(View):
-    template_name = 'registration/profile.html'
+class ProfileSettings(View):
+    template_name = 'registration/profile_settings.html'
 
     def get(self, request):
         context = {
@@ -74,14 +75,28 @@ class Profile(View):
         return render(request, self.template_name, context)
 
     def post(self, request):
-        form = ProfileForm(request.POST)
+        form = ProfileForm(request.POST, request.FILES, instance=request.user)
 
         if form.is_valid():
             form.save()
-            return redirect('index')
+            return redirect('profile')
         else:
-            form = ProfileForm()
+            form = ProfileForm(instance=request.user)
         context = {
             'form': form
+        }
+        return render(request, self.template_name, context)
+
+
+# TODO Test profile page with avatar func
+class Profile(View):
+    template_name = 'profile.html'
+
+    def get(self, request):
+        user = request.user
+        avatar = Avatar.objects.get(id=user)
+        context = {
+            'user': user,
+            'avatar': avatar
         }
         return render(request, self.template_name, context)

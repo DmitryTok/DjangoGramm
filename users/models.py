@@ -2,8 +2,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from djangogramm_app.models import Avatar
-
 
 # delete migrations: python3 manage.py migrate users zero
 class User(AbstractUser):
@@ -16,11 +14,6 @@ class User(AbstractUser):
     full_name = models.CharField(max_length=20, null=True)
     bio = models.TextField(max_length=1500, null=True)
     is_email_verify = models.BooleanField(default=False)
-    avatar = models.ForeignKey(
-        Avatar,
-        on_delete=models.CASCADE,
-        null=True
-    )
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

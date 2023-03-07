@@ -2,4 +2,7 @@ from django.db import models
 
 
 class Avatar(models.Model):
-    image = models.ImageField()
+    picture = models.ImageField(upload_to='image')
+
+    class Meta:
+        ordering = ('id',)
