@@ -19,7 +19,7 @@ class UsersAdmin(UserAdmin):
         ),
     )
     add_form = UserCreationForm
-    list_display = ('id', 'username', 'email', 'is_email_verify', 'full_name', 'bio')
-    list_filter = ('id', 'username', 'email', 'is_email_verify', 'full_name', 'bio')
-    search_fields = ('id', 'username', 'email', 'is_email_verify', 'full_name', 'bio')
-    ordering = ('username',)
+    list_display = ('id', 'username', 'email', 'is_email_verify', 'full_name', 'bio', 'avatar')
+    list_filter = ('id', 'username', 'email', 'is_email_verify', 'full_name', 'bio', 'avatar')
+    search_fields = ('id', 'username', 'email', 'is_email_verify', 'full_name', 'bio', 'avatar')
+    ordering = ('id',)

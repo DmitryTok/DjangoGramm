@@ -8,11 +8,16 @@
 <body class="container">
 <ul class="list-group">
     <li class="list-group-item">
-        User: {{ user.username }}
+        User: {{ user }}
     </li>
     <li class="list-group-item">
         <a href="{% url 'index' %}">Home</a>
     </li>
+    {% if user.is_authenticated %}
+    <li class="list-group-item">
+        <a href="{% url 'profile' %}">Profile</a>
+    </li>
+    {% endif %}
 </ul>
 {% block content %}
 {% endblock %}

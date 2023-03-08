@@ -3,10 +3,13 @@
 {% block content %}
     <div class="row">
         <h1>Profile</h1>
+        <hr>
+        {% if user.avatar %}
+            <p>Avatar: <img src="{{ user.avatar.url }}"></p>
+        {% endif %}
         <p>User: {{ user.username }}</p>
         <p>Email: {{ user.email }}</p>
         <p>Full name: {{ user.full_name }}</p>
         <p>Bio: {{ user.bio }}</p>
-        <p>Avatar: {{ avatar }}</p>
     </div>
 {% endblock %}

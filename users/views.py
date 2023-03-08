@@ -88,15 +88,12 @@ class ProfileSettings(View):
         return render(request, self.template_name, context)
 
 
-# TODO Test profile page with avatar func
 class Profile(View):
     template_name = 'profile.html'
 
     def get(self, request):
         user = request.user
-        avatar = Avatar.objects.get(id=user)
         context = {
             'user': user,
-            'avatar': avatar
         }
         return render(request, self.template_name, context)

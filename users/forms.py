@@ -47,14 +47,20 @@ class UserRegisterForm(UserCreationForm):
 
 
 class ProfileForm(forms.ModelForm):
+    full_name = forms.CharField(
+        label=_('Full name'),
+        max_length=50,
+        widget=TextInput(attrs={'class': 'form-control'})
+    )
+    bio = forms.CharField(
+        label=_('Bio'),
+        max_length=1500,
+        widget=Textarea(attrs={'class': 'form-control'})
+    )
+    avatar = forms.ImageField(
+        widget=FileInput(attrs={'class': 'form-control-file'})
+    )
 
     class Meta:
         model = User
-        fields = ('full_name', 'bio')
-        widgets = {
-            'username': TextInput(attrs={'class': 'form-control'}),
-            'first_name': TextInput(attrs={'class': 'form-control'}),
-            'last_name': TextInput(attrs={'class': 'form-control'}),
-            'bio': Textarea(attrs={'class': 'form-control'}),
-            'avatar': FileInput(attrs={'class': 'form-control-file'}),
-        }
+        fields = ('full_name', 'bio', 'avatar')

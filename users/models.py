@@ -14,6 +14,7 @@ class User(AbstractUser):
     full_name = models.CharField(max_length=20, null=True)
     bio = models.TextField(max_length=1500, null=True)
     is_email_verify = models.BooleanField(default=False)
+    avatar = models.ImageField(upload_to='image')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
