@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="row">
+        <h1>Profile</h1>
+        <p>
+            {% if request.user.id == user.id %}
+                <a href="{% url 'update_profile' %}" class="btn btn-outline-secondary">Update Profile</a>
+            {% endif %}
+            {% if request.user.id == user.id %}
+                <a href="{% url 'delete_profile' %}" class="btn btn-outline-danger">Delete Profile</a>
+            {% endif %}
+        </p>
+        <hr>
+        {% if user.avatar %}
+            <p>Avatar: <img src="{{ user.avatar.url }}"></p>
+        {% endif %}
+        <p>User: {{ user.username }}</p>
+        <p>Email: {{ user.email }}</p>
+        <p>Full name: {{ user.full_name }}</p>
+        <p>Bio: {{ user.bio }}</p>
+    </div>
+{% endblock %}

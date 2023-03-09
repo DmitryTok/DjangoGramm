@@ -10,13 +10,15 @@
     <li class="list-group-item">
         User: {{ user }}
     </li>
-    <li class="list-group-item">
-        <a href="{% url 'index' %}">Home</a>
-    </li>
-    {% if user.is_authenticated %}
-    <li class="list-group-item">
-        <a href="{% url 'profile' %}">Profile</a>
-    </li>
+    <div class="btn-group">
+        <li class="list-group-item">
+            <a href="{% url 'index' %}" class="btn btn-primary active" aria-current="page">Home</a>
+        </li>
+        {% if user.is_authenticated %}
+        <li class="list-group-item">
+            <a href="{% url 'profile' %}" class="btn btn-primary">Profile</a>
+        </li>
+    </div>
     {% endif %}
 </ul>
 {% block content %}

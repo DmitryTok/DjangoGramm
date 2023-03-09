@@ -3,7 +3,7 @@ run_app:
 	python3 manage.py runserver
 
 .PHONY: up
-up:
+up: migrate
 	docker-compose up
 
 .PHONY: close_docker-compose_file

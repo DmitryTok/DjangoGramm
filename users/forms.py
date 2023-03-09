@@ -43,10 +43,15 @@ class UserRegisterForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ('username', 'email')
+        fields = ('email',)
 
 
 class ProfileForm(forms.ModelForm):
+    username = forms.CharField(
+        label=_('Username'),
+        max_length=50,
+        widget=TextInput(attrs={'class': 'form-control'})
+    )
     full_name = forms.CharField(
         label=_('Full name'),
         max_length=50,
@@ -63,4 +68,4 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('full_name', 'bio', 'avatar')
+        fields = ('username', 'full_name', 'bio', 'avatar')
