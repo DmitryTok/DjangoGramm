@@ -7,6 +7,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import urlsafe_base64_decode
 from django.views import View
 
+from djangogramm_app.forms import AvatarForm
+from djangogramm_app.models import Avatar
 from users.forms import CustomAuthenticationForm, ProfileForm, UserRegisterForm
 from users.utils import send_email_for_verify
 
@@ -69,20 +71,25 @@ class ProfileSettings(View):
 
     def get(self, request):
         context = {
-            'form': ProfileForm()
+            'profile_form': ProfileForm(),
+            'image_form': AvatarForm()
         }
         return render(request, self.template_name, context)
 
     def post(self, request):
-        form = ProfileForm(request.POST, request.FILES, instance=request.user)
+        profile_form = ProfileForm(request.POST, instance=request.user)
+        avatar_form = AvatarForm(request.POST, request.FILES, instance=request.user)
 
-        if form.is_valid():
-            form.save()
+        if profile_form.is_valid() and avatar_form.is_valid():
+            profile_form.save()
+            avatar_form.save()
             return redirect('profile')
         else:
-            form = ProfileForm(instance=request.user)
+            profile_form = ProfileForm(request.POST, instance=request.user)
+            avatar_form = AvatarForm(request.POST, request.FILES, instance=request.user)
         context = {
-            'form': form
+            'profile_form': profile_form,
+            'avatar_form': avatar_form
         }
         return render(request, self.template_name, context)
 
@@ -104,27 +111,40 @@ class UpdateProfile(View):
     def get(self, request):
         context = {
             'common_form': UserRegisterForm(),
-            'extra_fields_form': ProfileForm()
+            'extra_fields_form': ProfileForm(),
+            'avatar_form': AvatarForm()
         }
         return render(request, self.template_name, context)
 
     def post(self, request):
         user_profile = get_object_or_404(User, id=request.user)
+        user_avatar = Avatar.objects.filter(picture=user_profile)
         extra_fields_form = ProfileForm(
             request.POST or None,
-            request.FILES or None,
             instance=user_profile
+        )
+        avatar_form = AvatarForm(
+            request.POST or None,
+            request.FILES or None,
+            instance=user_avatar
         )
         if user_profile != request.user:
             return redirect('404')
-        if extra_fields_form.is_valid():
+        if extra_fields_form.is_valid() and avatar_form.is_valid():
             extra_fields_form.save()
+            avatar_form.save()
             return redirect('profile')
         else:
-            extra_fields_form = ProfileForm(request.POST, request.FILES, instance=request.user)
+            extra_fields_form = ProfileForm(request.POST or None, instance=request.user)
+            avatar_form = AvatarForm(
+                request.POST or None,
+                request.FILES or None,
+                instance=user_avatar
+            )
         context = {
             'current_user': request.user,
-            'extra_fields_form': extra_fields_form
+            'extra_fields_form': extra_fields_form,
+            'avatar_form': avatar_form
         }
         return render(request, self.template_name, context)
 

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.exceptions import ValidationError
-from django.forms import EmailInput, FileInput, Textarea, TextInput
+from django.forms import EmailInput, Textarea, TextInput
 from django.utils.translation import gettext_lazy as _
 
 from users.utils import send_email_for_verify
@@ -61,9 +61,6 @@ class ProfileForm(forms.ModelForm):
         label=_('Bio'),
         max_length=1500,
         widget=Textarea(attrs={'class': 'form-control'})
-    )
-    avatar = forms.ImageField(
-        widget=FileInput(attrs={'class': 'form-control-file'})
     )
 
     class Meta:
