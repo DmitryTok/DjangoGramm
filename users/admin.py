@@ -1,25 +1,19 @@
 from django.contrib import admin
-from django.contrib.auth import get_user_model
-from django.contrib.auth.admin import UserAdmin
 
-from users.forms import UserCreationForm
-
-User = get_user_model()
+from users.models import User
 
 
 @admin.register(User)
-class UsersAdmin(UserAdmin):
-    add_fieldsets = (
-        (
-            None,
-            {
-                "classes": ("wide",),
-                "fields": ("username", "email", "password1", "password2"),
-            },
-        ),
+class UsersAdmin(admin.ModelAdmin):
+    list_display = (
+        'email',
+        'username',
     )
-    add_form = UserCreationForm
-    list_display = ('id', 'username', 'email', 'is_email_verify', 'full_name', 'bio', 'avatar')
-    list_filter = ('id', 'username', 'email', 'is_email_verify', 'full_name', 'bio', 'avatar')
-    search_fields = ('id', 'username', 'email', 'is_email_verify', 'full_name', 'bio', 'avatar')
-    ordering = ('id',)
+    list_filter = (
+        'email',
+        'username',
+    )
+    search_fields = (
+        'email',
+        'username',
+    )

@@ -1,13 +1,13 @@
 from django import forms
-from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.exceptions import ValidationError
-from django.forms import EmailInput, Textarea, TextInput
+from django.forms import ClearableFileInput, EmailInput, Textarea, TextInput
 from django.utils.translation import gettext_lazy as _
 
+from djangogramm_app.models import Avatar
+from users.models import User
 from users.utils import send_email_for_verify
-
-User = get_user_model()
 
 
 class CustomAuthenticationForm(AuthenticationForm):
@@ -20,7 +20,7 @@ class CustomAuthenticationForm(AuthenticationForm):
             self.user_cache = authenticate(
                 self.request, username=username, password=password
             )
-            if not self.user_cache.is_email_verify:
+            if not self.user_cache.is_email_veryfi:
                 send_email_for_verify(self.request, self.user_cache)
                 raise ValidationError(
                     'Email is not verify, please check your email address',
@@ -65,4 +65,15 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('username', 'full_name', 'bio', 'avatar')
+        fields = ('username', 'full_name', 'bio')
+
+
+class AvatarForm(forms.ModelForm):
+    avatar = forms.ImageField(
+        label=_('Avatar'),
+        widget=ClearableFileInput(attrs={'multiple': False})
+    )
+
+    class Meta:
+        model = Avatar
+        fields = ('avatar',)
