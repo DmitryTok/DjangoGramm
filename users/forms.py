@@ -2,10 +2,9 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.exceptions import ValidationError
-from django.forms import ClearableFileInput, EmailInput, Textarea, TextInput
+from django.forms import EmailInput, Textarea, TextInput
 from django.utils.translation import gettext_lazy as _
 
-from djangogramm_app.models import Avatar
 from users.models import User
 from users.utils import send_email_for_verify
 
@@ -43,37 +42,27 @@ class UserRegisterForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ('email',)
+        fields = ('email', 'username')
 
 
 class ProfileForm(forms.ModelForm):
-    username = forms.CharField(
-        label=_('Username'),
-        max_length=50,
-        widget=TextInput(attrs={'class': 'form-control'})
-    )
     full_name = forms.CharField(
         label=_('Full name'),
         max_length=50,
+        required=False,
         widget=TextInput(attrs={'class': 'form-control'})
     )
     bio = forms.CharField(
         label=_('Bio'),
         max_length=1500,
+        required=False,
         widget=Textarea(attrs={'class': 'form-control'})
+    )
+    avatar = forms.ImageField(
+        label=_('Avatar'),
+        required=False,
     )
 
     class Meta:
         model = User
-        fields = ('username', 'full_name', 'bio')
-
-
-class AvatarForm(forms.ModelForm):
-    avatar = forms.ImageField(
-        label=_('Avatar'),
-        widget=ClearableFileInput(attrs={'multiple': False})
-    )
-
-    class Meta:
-        model = Avatar
-        fields = ('avatar',)
+        fields = ('full_name', 'bio', 'avatar')

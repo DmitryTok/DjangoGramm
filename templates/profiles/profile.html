@@ -13,7 +13,7 @@
         </p>
         <hr>
         {% if user.avatar %}
-            <p>Avatar: <img src="{{ user.avatar.url }}"></p>
+            <img src="{{ user.avatar.url }}">
         {% endif %}
         <p>User: {{ user.username }}</p>
         <p>Email: {{ user.email }}</p>

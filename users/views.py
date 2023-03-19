@@ -7,8 +7,7 @@ from django.shortcuts import redirect, render
 from django.utils.http import urlsafe_base64_decode
 from django.views import View
 
-from users.forms import (AvatarForm, CustomAuthenticationForm, ProfileForm,
-                         UserRegisterForm)
+from users.forms import CustomAuthenticationForm, ProfileForm, UserRegisterForm
 from users.models import User
 from users.utils import send_email_for_verify
 
@@ -53,9 +52,9 @@ class Register(View):
 
         if form.is_valid():
             form.save()
-            username = form.cleaned_data.get('email')
+            email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=password)
+            user = authenticate(email=email, password=password)
             send_email_for_verify(request, user)
             return redirect('confirm_email')
         context = {
@@ -69,20 +68,19 @@ class ProfileSettings(View):
 
     def get(self, request):
         context = {
-            'profile_form': ProfileForm(request.POST, instance=request.user),
+            'profile_form': ProfileForm(request.POST, request.FILES, instance=request.user)
         }
         return render(request, self.template_name, context)
 
     def post(self, request):
-        profile_form = ProfileForm(request.POST, instance=request.user)
-
+        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user)
         if profile_form.is_valid():
             profile_form.save()
             return redirect('profile')
         else:
-            profile_form = ProfileForm(request.POST, instance=request.user)
+            profile_form = ProfileForm(request.POST, request.FILES, instance=request.user)
         context = {
-            'profile_form': profile_form,
+            'profile_form': profile_form
         }
         return render(request, self.template_name, context)
 
@@ -105,7 +103,24 @@ class UpdateProfile(View):
         context = {
             'common_form': UserRegisterForm(),
             'extra_fields_form': ProfileForm(),
-            'avatar_form': AvatarForm()
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        current_user = User.objects.get(id=request.user.id)
+        common_form = UserRegisterForm(request.POST or None, instance=current_user)
+        extra_fields_form = ProfileForm(request.POST, request.FILES, instance=current_user)
+        if extra_fields_form.is_valid() and common_form.is_valid():
+            extra_fields_form.save()
+            common_form.save()
+            login(request, current_user)
+            return redirect('profile')
+        else:
+            common_form = UserRegisterForm(request.POST or None, instance=current_user)
+            extra_fields_form = ProfileForm(request.POST, request.FILES, instance=current_user)
+        context = {
+            'extra_fields_form': extra_fields_form,
+            'common_form': common_form
         }
         return render(request, self.template_name, context)
 

@@ -4,6 +4,7 @@
     <h1>Update Profile</h1>
     <hr>
     <form action="{% url 'update_profile' %}" method="post" enctype="multipart/form-data">
+        {{ common_form.as_p }}
         {{ extra_fields_form.as_p }}
         {% csrf_token %}
     <button type="submit" class="btn btn-success">Submit</button>

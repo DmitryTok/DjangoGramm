@@ -8,7 +8,14 @@ class User(AbstractUser):
         _('email address'),
         unique=True,
     )
-    is_email_veryfi = True
+    full_name = models.CharField(max_length=50)
+    bio = models.TextField(max_length=1500)
+    avatar = models.ImageField(
+        upload_to='avatars/',
+        null=True,
+        blank=True
+    )
+    is_email_veryfi = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
