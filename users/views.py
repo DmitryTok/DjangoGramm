@@ -138,3 +138,14 @@ class DeleteProfile(View):
     def post(self, request):
         request.user.delete()
         return redirect('index')
+
+
+class ProfileList(View):
+    template_name = 'profiles/profile_list.html'
+
+    def get(self, request):
+        all_users = User.objects.all()
+        context = {
+            'all_users': all_users,
+        }
+        return render(request, self.template_name, context)

@@ -3,10 +3,12 @@
 {% block content %}
     <h1>Delete Profile</h1>
     <hr>
-    <p>Confirm to delete profile: {{ user.username }}</p>
+    <h4>Confirm to delete profile: {{ user.username }}</h4>
+    <br>
     {% if request.user.is_authenticated %}
         <form action="{% url 'delete_profile' %}" method="post">
             {% csrf_token %}
+            <a href="{% url 'profile' %}" class="btn btn-secondary">Cancel</a>
             <button type="submit" class="btn btn-danger">Delete</button>
         </form>
     {% endif %}

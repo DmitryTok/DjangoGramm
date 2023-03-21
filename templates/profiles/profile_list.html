@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>All Djangogramm Users</h1>
+    <hr>
+    <ul class="list-group">
+        {% for user in all_users %}
+            <a href="{% url 'profile' %}"><li class="list-group-item">{{ user.username }}</li></a>
+        {% endfor %}
+    </ul>
+{% endblock %}

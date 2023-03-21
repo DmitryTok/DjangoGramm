@@ -6,12 +6,10 @@
         <p>
             {% if request.user.id == user.id %}
                 <a href="{% url 'update_profile' %}" class="btn btn-outline-secondary">Update Profile</a>
-            {% endif %}
-            {% if request.user.id == user.id %}
                 <a href="{% url 'delete_profile' %}" class="btn btn-outline-danger">Delete Profile</a>
-            {% endif %}
         </p>
         <hr>
+        {% endif %}
         {% if user.avatar %}
             <img src="{{ user.avatar.url }}">
         {% endif %}
