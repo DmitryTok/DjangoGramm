@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.tokens import \
     default_token_generator as token_generator
@@ -88,12 +89,16 @@ class ProfileSettings(View):
 class Profile(View):
     template_name = 'profiles/profile.html'
 
-    def get(self, request):
-        user = request.user
-        context = {
-            'user': user,
-        }
-        return render(request, self.template_name, context)
+    def get(self, request, user_id):
+        if request.user.is_authenticated:
+            user = User.objects.get(id=user_id)
+            context = {
+                'user': user
+            }
+            return render (request, self.template_name, context)
+        else:
+            messages.success(request, ('You Must Be Loged In To View This Page'))
+            return redirect('login')
 
 
 class UpdateProfile(View):
@@ -144,8 +149,12 @@ class ProfileList(View):
     template_name = 'profiles/profile_list.html'
 
     def get(self, request):
-        all_users = User.objects.all()
-        context = {
-            'all_users': all_users,
-        }
-        return render(request, self.template_name, context)
+        if request.user.is_authenticated:
+            all_users = User.objects.exclude(id=request.user.id)
+            context = {
+                'all_users': all_users,
+            }
+            return render(request, self.template_name, context)
+        else:
+            messages.success(request, ('You Must Be Loged In To View This Page'))
+            return redirect('login')

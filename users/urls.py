@@ -18,7 +18,7 @@ urlpatterns = [
         name='verify_email'
     ),
     path('register/', Register.as_view(), name='register'),
-    path('profile/', Profile.as_view(), name='profile'),
+    path('profile/<int:user_id>', Profile.as_view(), name='profile'),
     path('profile_list/', ProfileList.as_view(), name='profile_list'),
     path('profile_page/', Profile.as_view(), name='profile_page'),
     path('update_profile/', UpdateProfile.as_view(), name='update_profile'),

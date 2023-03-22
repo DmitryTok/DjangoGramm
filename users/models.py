@@ -15,6 +15,12 @@ class User(AbstractUser):
         null=True,
         blank=True
     )
+    follows = models.ManyToManyField(
+        'self',
+        related_name='followed_by',
+        symmetrical=False,
+        blank=True
+    )
     is_email_veryfi = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'

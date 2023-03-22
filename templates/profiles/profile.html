@@ -11,11 +11,25 @@
         <hr>
         {% endif %}
         {% if user.avatar %}
-            <img src="{{ user.avatar.url }}">
-        {% endif %}
+        <div class="card mb-3" style="max-width: 540px;">
+          <div class="row g-0">
+            <div class="col-md-4">
+              <img src="{{ user.avatar.url }}" class="img-fluid rounded-start" alt="Profile">
+            </div>
+              {% endif %}
+            <div class="col-md-8">
+              <div class="card-body">
         <p>User: {{ user.username }}</p>
         <p>Email: {{ user.email }}</p>
         <p>Full name: {{ user.full_name }}</p>
         <p>Bio: {{ user.bio }}</p>
+        <strong class="card-text">Follows:</strong><br/>
+            {% for following in user.follows.all %}
+                <a href="{% url 'profile' following.id %}">{{ following.username }}</a><br/>
+            {% endfor %}
+        <strong class="card-text">Followed By:</strong><br>
+            {% for following in user.followed_by.all %}
+                <a href="{% url 'profile' following.id %}">{{ following.username }}</a><br/>
+            {% endfor %}
     </div>
 {% endblock %}
