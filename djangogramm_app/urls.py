@@ -1,7 +1,7 @@
 from django.urls import path
 
-from djangogramm_app.views import Avatar
+from djangogramm_app.views import PostView
 
 urlpatterns = [
-    path('picture/', Avatar.as_view(), name='avatar'),
+    path('', PostView.as_view(template_name='index.html'), name='index'),
 ]

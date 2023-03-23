@@ -93,9 +93,27 @@ class Profile(View):
         if request.user.is_authenticated:
             user = User.objects.get(id=user_id)
             context = {
+                'user': user,
+            }
+            return render(request, self.template_name, context)
+        else:
+            messages.success(request, ('You Must Be Loged In To View This Page'))
+            return redirect('login')
+
+    def post(self, request, user_id):
+        if request.user.is_authenticated:
+            user = User.objects.get(id=user_id)
+            current_user = request.user
+            action = request.POST['follow']
+            if action == 'unfollow':
+                current_user.follows.remove(user)
+            elif action == 'follow':
+                current_user.follows.add(user)
+            current_user.save()
+            context = {
                 'user': user
             }
-            return render (request, self.template_name, context)
+            return render(request, self.template_name, context)
         else:
             messages.success(request, ('You Must Be Loged In To View This Page'))
             return redirect('login')

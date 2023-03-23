@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.models import Group
 
 from users.models import User
 
@@ -17,3 +18,6 @@ class UsersAdmin(admin.ModelAdmin):
         'email',
         'username',
     )
+
+
+admin.site.unregister(Group)
