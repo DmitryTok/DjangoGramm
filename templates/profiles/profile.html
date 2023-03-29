@@ -3,41 +3,50 @@
 {% block content %}
     <div class="row">
         <h1>Profile</h1>
+        <br>
         <form method="post">
             {% csrf_token %}
-            {% if request.user in user.followed_by.all %}
-                <button class="btn btn-outline-danger" name="follow" value="unfollow" type="submit">Unfollow</button>
-            {% else %}
-                <button class="btn btn-outline-primary" name="follow" value="follow" type="submit">Follow</button>
-            {% endif %}
-        </form>
-        <p>
             {% if request.user.id == user.id %}
-                <a href="{% url 'update_profile' %}" class="btn btn-outline-secondary">Update Profile</a>
-                <a href="{% url 'delete_profile' %}" class="btn btn-outline-danger">Delete Profile</a>
-        </p>
-        <hr>
+                <p>
+                    <a href="{% url 'update_profile'  %}" class="btn btn-outline-secondary">Update Profile</a>
+                    <a href="{% url 'delete_profile' %}" class="btn btn-outline-danger">Delete Profile</a>
+                </p>
+        </form>
             {% endif %}
         {% if user.avatar %}
         <div class="card mb-3" style="max-width: 540px;">
+          <br>
           <div class="row g-0">
-            <div class="col-md-4">
-              <img src="{{ user.avatar.url }}" class="img-fluid rounded-start" alt="Profile">
-            </div>
-              {% endif %}
-            <div class="col-md-8">
-              <div class="card-body">
-        <p>User: {{ user.username }}</p>
-        <p>Email: {{ user.email }}</p>
-        <p>Full name: {{ user.full_name }}</p>
-        <p>Bio: {{ user.bio }}</p>
-        <strong class="card-text">Follows:</strong><br/>
-            {% for following in user.follows.all %}
-                <a href="{% url 'profile' following.id %}">{{ following.username }}</a><br/>
-            {% endfor %}
-        <strong class="card-text">Followed By:</strong><br>
-            {% for following in user.followed_by.all %}
-                <a href="{% url 'profile' following.id %}">{{ following.username }}</a><br/>
-            {% endfor %}
+                <div class="col-md-4">
+                  <img src="{{ user.avatar.url }}" class="img-fluid rounded-start" alt="Profile">
+                </div>
+                  {% endif %}
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <p>User: {{ user.username }}</p>
+                        <p>Email: {{ user.email }}</p>
+                        <p>Full name: {{ user.full_name }}</p>
+                        <p>Bio: {{ user.bio }}</p>
+                    </div>
+                </div>
+          </div>
+        </div>
     </div>
+{% for post in posts %}
+<div class="card">
+    <div class="card-body">
+        <div class="container">
+            <div class="alert alert-secondary" role="alert">
+                <p>{{ post }}</p>
+                Post publication date: {{ post.pub_date|date:"d.m.Y" }}
+            </div>
+            <div class="alert alert-info" role="alert">
+                {% for tag in post.tag.all %}
+                    #{{ tag }}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div> <br>
+    {% endfor %}
 {% endblock %}

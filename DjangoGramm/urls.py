@@ -7,7 +7,7 @@ from djangogramm_app.views import PostView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', PostView.as_view(template_name='index.html'), name='index'),
     path('users/', include('users.urls')),
+    path('', PostView.as_view(), name='index'),
     path('djangogramm_app/', include('djangogramm_app.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

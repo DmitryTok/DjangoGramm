@@ -1,13 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.tokens import \
-    default_token_generator as token_generator
+from django.contrib.auth.tokens import default_token_generator as token_generator
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import ValidationError
 from django.shortcuts import redirect, render
 from django.utils.http import urlsafe_base64_decode
 from django.views import View
 
+from djangogramm_app.models import Post
 from users.forms import CustomAuthenticationForm, ProfileForm, UserRegisterForm
 from users.models import User
 from users.utils import send_email_for_verify
@@ -74,12 +74,12 @@ class ProfileSettings(View):
         return render(request, self.template_name, context)
 
     def post(self, request):
-        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user)
+        profile_form = ProfileForm(request.POST, request.FILES)
         if profile_form.is_valid():
             profile_form.save()
-            return redirect('profile')
+            return redirect('index')
         else:
-            profile_form = ProfileForm(request.POST, request.FILES, instance=request.user)
+            profile_form = ProfileForm(request.POST, request.FILES)
         context = {
             'profile_form': profile_form
         }
@@ -92,8 +92,10 @@ class Profile(View):
     def get(self, request, user_id):
         if request.user.is_authenticated:
             user = User.objects.get(id=user_id)
+            posts = Post.objects.filter(user=user_id).order_by('-pub_date')
             context = {
                 'user': user,
+                'posts': posts
             }
             return render(request, self.template_name, context)
         else:
@@ -104,11 +106,6 @@ class Profile(View):
         if request.user.is_authenticated:
             user = User.objects.get(id=user_id)
             current_user = request.user
-            action = request.POST['follow']
-            if action == 'unfollow':
-                current_user.follows.remove(user)
-            elif action == 'follow':
-                current_user.follows.add(user)
             current_user.save()
             context = {
                 'user': user
@@ -132,18 +129,16 @@ class UpdateProfile(View):
     def post(self, request):
         current_user = User.objects.get(id=request.user.id)
         common_form = UserRegisterForm(request.POST or None, instance=current_user)
-        extra_fields_form = ProfileForm(request.POST, request.FILES, instance=current_user)
+        extra_fields_form = ProfileForm(request.POST or None, request.FILES or None, instance=current_user)
         if extra_fields_form.is_valid() and common_form.is_valid():
             extra_fields_form.save()
             common_form.save()
             login(request, current_user)
-            return redirect('profile')
-        else:
-            common_form = UserRegisterForm(request.POST or None, instance=current_user)
-            extra_fields_form = ProfileForm(request.POST, request.FILES, instance=current_user)
+            messages.success(request, ('Your Profile Has Been Updated!'))
+            return redirect('profile', args=[request.user.id])
         context = {
-            'extra_fields_form': extra_fields_form,
-            'common_form': common_form
+            'common_form': common_form,
+            'extra_fields_form': extra_fields_form
         }
         return render(request, self.template_name, context)
 
