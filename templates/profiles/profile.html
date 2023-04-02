@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
     <div class="row">
         <h1>Profile</h1>
@@ -13,14 +13,13 @@
                 </p>
         </form>
             {% endif %}
-        {% if user.avatar %}
+            {% if user.avatar %}
         <div class="card mb-3" style="max-width: 540px;">
-          <br>
           <div class="row g-0">
-                <div class="col-md-4">
-                  <img src="{{ user.avatar.url }}" class="img-fluid rounded-start" alt="Profile">
-                </div>
-                  {% endif %}
+            <div class="col-md-4">
+              <img src="{{ user.avatar.url }}" alt="Profile">
+            </div>
+              {% endif %}
                 <div class="col-md-8">
                     <div class="card-body">
                         <p>User: {{ user.username }}</p>

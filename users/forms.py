@@ -5,12 +5,11 @@ from django.core.exceptions import ValidationError
 from django.forms import EmailInput, Textarea, TextInput
 from django.utils.translation import gettext_lazy as _
 
+from email_veryfi.send_email_for_verify import send_email_for_verify
 from users.models import User
-from users.utils import send_email_for_verify
 
 
 class CustomAuthenticationForm(AuthenticationForm):
-
     def clean(self):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
@@ -19,14 +18,17 @@ class CustomAuthenticationForm(AuthenticationForm):
             self.user_cache = authenticate(
                 self.request, username=username, password=password
             )
-            if not self.user_cache.is_email_veryfi:
-                send_email_for_verify(self.request, self.user_cache)
+            if self.user_cache is None:
                 raise ValidationError(
-                    'Email is not verify, please check your email address',
+                    'Invalid login credentials',
                     code='invalid_login',
                 )
-            if self.user_cache is None:
-                raise self.get_invalid_login_error()
+            elif not self.user_cache.is_email_verify:
+                send_email_for_verify(self.request, self.user_cache)
+                raise ValidationError(
+                    'Email is not verified, please check your email address',
+                    code='invalid_login',
+                )
             else:
                 self.confirm_login_allowed(self.user_cache)
 
@@ -58,11 +60,7 @@ class ProfileForm(forms.ModelForm):
         required=False,
         widget=Textarea(attrs={'class': 'form-control'})
     )
-    avatar = forms.ImageField(
-        label=_('Avatar'),
-        required=False,
-    )
 
     class Meta:
         model = User
-        fields = ('full_name', 'bio', 'avatar')
+        fields = ('full_name', 'bio')

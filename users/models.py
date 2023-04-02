@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -8,6 +9,11 @@ class User(AbstractUser):
         _('email address'),
         unique=True,
     )
+    username = models.CharField(
+        max_length=150,
+        unique=True,
+        validators=[UnicodeUsernameValidator()]
+    )
     full_name = models.CharField(max_length=50)
     bio = models.TextField(max_length=1500)
     avatar = models.ImageField(
@@ -15,7 +21,7 @@ class User(AbstractUser):
         null=True,
         blank=True
     )
-    is_email_veryfi = models.BooleanField(default=False)
+    is_email_verify = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

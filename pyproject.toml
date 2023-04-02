@@ -4,6 +4,7 @@ max-line-length = 120
 ignore = ["E203", "E266", "E501", "W503", "F403", "F401", "E999", "E501"]
 
 [tool.mypy]
+exclude = ['djangogramm_app/migrations/*']
 warn_unused_configs = true
 ignore_missing_imports = true
 

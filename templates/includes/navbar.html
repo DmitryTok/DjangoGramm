@@ -9,10 +9,7 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'profile' request.user.id %}">My Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'profile_list' %}">Profile List</a>
+                    <a class="nav-link" aria-current="page" href="{% url 'profile' %}">My Profile</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'post_create' %}">Create Post</a>

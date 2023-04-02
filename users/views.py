@@ -7,10 +7,9 @@ from django.shortcuts import redirect, render
 from django.utils.http import urlsafe_base64_decode
 from django.views import View
 
-from djangogramm_app.models import Post
+from email_veryfi.send_email_for_verify import send_email_for_verify
 from users.forms import CustomAuthenticationForm, ProfileForm, UserRegisterForm
 from users.models import User
-from users.utils import send_email_for_verify
 
 
 class CustomLoginView(LoginView):
@@ -22,7 +21,7 @@ class EmailVerify(View):
     def get(self, request, uidb64, token):
         user = self.get_user(uidb64)
         if user is not None and token_generator.check_token(user, token):
-            user.is_email_veryfi = True
+            user.is_email_verify = True
             user.save()
             login(request, user)
             return redirect('profile_settings')
@@ -69,19 +68,20 @@ class ProfileSettings(View):
 
     def get(self, request):
         context = {
-            'profile_form': ProfileForm(request.POST, request.FILES, instance=request.user)
+            'profile_form': ProfileForm(request.POST, instance=request.user),
         }
         return render(request, self.template_name, context)
 
     def post(self, request):
-        profile_form = ProfileForm(request.POST, request.FILES)
+        profile_form = ProfileForm(request.POST, instance=request.user)
+
         if profile_form.is_valid():
             profile_form.save()
-            return redirect('index')
+            return redirect('profile')
         else:
-            profile_form = ProfileForm(request.POST, request.FILES)
+            profile_form = ProfileForm(request.POST, instance=request.user)
         context = {
-            'profile_form': profile_form
+            'profile_form': profile_form,
         }
         return render(request, self.template_name, context)
 
@@ -89,31 +89,12 @@ class ProfileSettings(View):
 class Profile(View):
     template_name = 'profiles/profile.html'
 
-    def get(self, request, user_id):
-        if request.user.is_authenticated:
-            user = User.objects.get(id=user_id)
-            posts = Post.objects.filter(user=user_id).order_by('-pub_date')
-            context = {
-                'user': user,
-                'posts': posts
-            }
-            return render(request, self.template_name, context)
-        else:
-            messages.success(request, ('You Must Be Loged In To View This Page'))
-            return redirect('login')
-
-    def post(self, request, user_id):
-        if request.user.is_authenticated:
-            user = User.objects.get(id=user_id)
-            current_user = request.user
-            current_user.save()
-            context = {
-                'user': user
-            }
-            return render(request, self.template_name, context)
-        else:
-            messages.success(request, ('You Must Be Loged In To View This Page'))
-            return redirect('login')
+    def get(self, request):
+        user = request.user
+        context = {
+            'user': user,
+        }
+        return render(request, self.template_name, context)
 
 
 class UpdateProfile(View):
@@ -123,22 +104,6 @@ class UpdateProfile(View):
         context = {
             'common_form': UserRegisterForm(),
             'extra_fields_form': ProfileForm(),
-        }
-        return render(request, self.template_name, context)
-
-    def post(self, request):
-        current_user = User.objects.get(id=request.user.id)
-        common_form = UserRegisterForm(request.POST or None, instance=current_user)
-        extra_fields_form = ProfileForm(request.POST or None, request.FILES or None, instance=current_user)
-        if extra_fields_form.is_valid() and common_form.is_valid():
-            extra_fields_form.save()
-            common_form.save()
-            login(request, current_user)
-            messages.success(request, ('Your Profile Has Been Updated!'))
-            return redirect('profile', args=[request.user.id])
-        context = {
-            'common_form': common_form,
-            'extra_fields_form': extra_fields_form
         }
         return render(request, self.template_name, context)
 
