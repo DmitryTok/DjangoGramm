@@ -8,7 +8,12 @@ from django.utils.http import urlsafe_base64_decode
 from django.views import View
 
 from email_veryfi.send_email_for_verify import send_email_for_verify
-from users.forms import CustomAuthenticationForm, ProfileForm, UserRegisterForm
+from users.forms import (
+    CustomAuthenticationForm,
+    ProfileForm,
+    UserRegisterForm,
+    UserUpdateForm,
+)
 from users.models import User
 
 
@@ -68,7 +73,7 @@ class ProfileSettings(View):
 
     def get(self, request):
         context = {
-            'profile_form': ProfileForm(request.POST, instance=request.user),
+            'profile_form': ProfileForm(),
         }
         return render(request, self.template_name, context)
 
@@ -77,7 +82,7 @@ class ProfileSettings(View):
 
         if profile_form.is_valid():
             profile_form.save()
-            return redirect('profile')
+            return redirect('index')
         else:
             profile_form = ProfileForm(request.POST, instance=request.user)
         context = {
@@ -89,37 +94,78 @@ class ProfileSettings(View):
 class Profile(View):
     template_name = 'profiles/profile.html'
 
-    def get(self, request):
-        user = request.user
-        context = {
-            'user': user,
-        }
-        return render(request, self.template_name, context)
+    def get(self, request, user_id):
+        if request.user.is_authenticated:
+            user = User.objects.get(id=user_id)
+            context = {
+                'user': user,
+            }
+            return render(request, self.template_name, context)
+        else:
+            messages.success(request, ('You Must Be Loged In To View This Page'))
+            return redirect('login')
 
 
 class UpdateProfile(View):
     template_name = 'profiles/update_profile.html'
 
     def get(self, request):
-        context = {
-            'common_form': UserRegisterForm(),
-            'extra_fields_form': ProfileForm(),
-        }
-        return render(request, self.template_name, context)
+        if request.user.is_authenticated:
+            context = {
+                'extra_fields_form': ProfileForm(),
+                'common_form': UserUpdateForm()
+            }
+            return render(request, self.template_name, context)
+        else:
+            messages.success(request, ('You Must Be Loged In To View This Page'))
+            return redirect('login')
+
+    def post(self, request):
+        if request.user.is_authenticated:
+            current_user = User.objects.get(id=request.user.id)
+            common_form = UserUpdateForm(request.POST or None, request.FILES or None, instance=current_user)
+            extra_fields_form = ProfileForm(
+                request.POST or None,
+                request.FILES or None,
+                instance=current_user
+            )
+            if common_form.is_valid() and extra_fields_form.is_valid():
+                common_form.save()
+                extra_fields_form.save()
+                messages.success(request, ('Your profile has been updated'))
+                return redirect('index')
+            else:
+                context = {
+                    'extra_fields_form': extra_fields_form,
+                    'common_form': common_form
+                }
+                return render(request, self.template_name, context)
+        else:
+            messages.success(request, ('You Must Be Loged In To View This Page'))
+            return redirect('login')
 
 
 class DeleteProfile(View):
     template_name = 'profiles/delete_profile.html'
 
     def get(self, request):
-        user = request.user
-        context = {
-            'user': user
-        }
-        return render(request, self.template_name, context)
+        if request.user.is_authenticated:
+            user = request.user
+            context = {
+                'user': user
+            }
+            return render(request, self.template_name, context)
+        else:
+            messages.success(request, ('You Must Be Loged In To View This Page'))
+            return redirect('login')
 
-    def post(self, request):
-        request.user.delete()
+    @staticmethod
+    def post(request):
+        if request.user.is_authenticated:
+            request.user.delete()
+        else:
+            messages.success(request, ('You Must Be Loged In To View This Page'))
+            return redirect('login')
         return redirect('index')
 
 

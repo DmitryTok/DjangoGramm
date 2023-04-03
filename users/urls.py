@@ -6,6 +6,7 @@ from users.views import (
     DeleteProfile,
     EmailVerify,
     Profile,
+    ProfileList,
     ProfileSettings,
     Register,
     UpdateProfile,
@@ -25,7 +26,8 @@ urlpatterns = [
         name='verify_email'
     ),
     path('register/', Register.as_view(), name='register'),
-    path('profile/', Profile.as_view(), name='profile'),
+    path('profile/<user_id>', Profile.as_view(), name='profile'),
+    path('profile_list/', ProfileList.as_view(), name='profile_list'),
     path('update_profile/', UpdateProfile.as_view(), name='update_profile'),
     path('delete_profile/', DeleteProfile.as_view(), name='delete_profile'),
     path('profile_settings/', ProfileSettings.as_view(), name='profile_settings'),
@@ -34,5 +36,4 @@ urlpatterns = [
         TemplateView.as_view(template_name='registration/confirm_email.html'),
         name='confirm_email'
     ),
-    path('bad_request/', TemplateView.as_view(template_name='errors/400.html'), name='400')
 ]

@@ -9,7 +9,7 @@ class PostAdmin(admin.ModelAdmin):
         'user',
         'text',
         'picture',
-        'pub_date'
+        'pub_date',
     )
     list_filter = (
         'user',
@@ -21,18 +21,21 @@ class PostAdmin(admin.ModelAdmin):
         'user',
         'text',
         'picture',
-        'pub_date'
+        'pub_date',
     )
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     list_display = (
+        'id',
         'name',
     )
     list_filter = (
+        'id',
         'name',
     )
     search_fields = (
+        'id',
         'name',
     )

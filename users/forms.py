@@ -60,7 +60,21 @@ class ProfileForm(forms.ModelForm):
         required=False,
         widget=Textarea(attrs={'class': 'form-control'})
     )
+    avatar = forms.ImageField(label='Avatar')
 
     class Meta:
         model = User
-        fields = ('full_name', 'bio')
+        fields = ('full_name', 'bio', 'avatar')
+
+
+class UserUpdateForm(forms.ModelForm):
+    username = forms.CharField(
+        label=_('Username'),
+        max_length=50,
+        required=False,
+        widget=TextInput(attrs={'class': 'form-control'})
+    )
+
+    class Meta:
+        model = User
+        fields = ('username',)
