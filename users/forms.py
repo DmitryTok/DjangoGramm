@@ -60,11 +60,10 @@ class ProfileForm(forms.ModelForm):
         required=False,
         widget=Textarea(attrs={'class': 'form-control'})
     )
-    avatar = forms.ImageField(label='Avatar')
 
     class Meta:
         model = User
-        fields = ('full_name', 'bio', 'avatar')
+        fields = ('full_name', 'bio')
 
 
 class UserUpdateForm(forms.ModelForm):
@@ -78,3 +77,11 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('username',)
+
+
+class UserAvatarForm(forms.ModelForm):
+    avatar = forms.ImageField(label='Avatar', required=False)
+
+    class Meta:
+        model = User
+        fields = ('avatar',)

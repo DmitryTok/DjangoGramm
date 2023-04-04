@@ -14,7 +14,7 @@
         </form>
             {% endif %}
             {% if user.avatar %}
-        <div class="card mb-3" style="max-width: 540px;">
+        <div class="card mb-3" style="max-width: 780px;">
           <div class="row g-0">
             <div class="col-md-4">
               <img src="{{ user.avatar.url }}" class="img-fluid rounded-start" alt="Profile">
@@ -39,17 +39,22 @@
 <div class="card">
     <div class="card-body">
         <div class="container">
+            image
+        </div>
+        <br>
+        <div class="container">
             <div class="alert alert-secondary" role="alert">
                 <p>{{ post }}</p>
                 Post publication date: {{ post.pub_date|date:"d.m.Y" }}
             </div>
             <div class="alert alert-info" role="alert">
-                {% for tag in post.tag.all %}
+                {% for tag in post.tags.all %}
                     #{{ tag }}
                 {% endfor %}
             </div>
         </div>
     </div>
-</div> <br>
-    {% endfor %}
+</div>
+<br>
+{% endfor %}
 {% endblock %}

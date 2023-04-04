@@ -4,8 +4,9 @@
     <h1>Add some more info</h1>
     <hr>
     <form action="{% url 'profile_settings' %}" method="post" enctype="multipart/form-data">
-        {{ profile_form.as_p }}
         {% csrf_token %}
+        {{ profile_form.as_p }}
+        {{ profile_avatar_form }}
     <button type="submit" class="btn btn-success">Submit</button>
     </form>
 {% endblock %}

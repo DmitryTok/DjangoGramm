@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
     <h1>Posts</h1>
     <hr>
@@ -7,13 +7,15 @@
             <div class="card">
               <div class="card-body">
                   <div class="container">
-                      <p><a href="{% url 'profile' post.user.id %}">{{ post.user.username }}</a></p>
+                      <p>
+                          <a href="{% url 'profile' post.user.id %}">{{ post.user.username }}</a>
+                      </p>
                       <div class="alert alert-secondary" role="alert">
                             <p>{{ post }}</p>
                             Post publication date: {{ post.pub_date|date:"d.m.Y" }}
                       </div>
                       <div class="alert alert-info" role="alert">
-                          {% for tag in post.tag.all %}
+                          {% for tag in post.tags.all %}
                             #{{ tag }}
                           {% endfor %}
                       </div>

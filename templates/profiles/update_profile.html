@@ -7,6 +7,8 @@
         {% csrf_token %}
         {{ common_form.as_p }}
         {{ extra_fields_form.as_p }}
+        {{ profile_avatar_form }}
+    <p><br>
     <button type="submit" class="btn btn-success">Submit</button>
     </form>
 {% endblock %}

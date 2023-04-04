@@ -36,12 +36,17 @@ class PostCreateView(View):
     def post(self, request):
         if request.user.is_authenticated:
             tag_form = TagForm(request.POST)
-            post_form = PostForm(request.POST or None)
+            post_form = PostForm(request.POST or None, request.FILES)
             if post_form.is_valid() and tag_form.is_valid():
                 post = post_form.save(commit=False)
                 post.user = request.user
                 post.save()
-                tag_form.save()
+                tags_names = tag_form.cleaned_data['tag'].split(',')
+                tags = []
+                for tag_name in tags_names:
+                    tag, created = Tag.objects.get_or_create(name=tag_name.strip())
+                    tags.append(tag)
+                post.tags.set(tags)
                 return redirect('index')
         else:
             post_form = PostForm(request.POST, request.FILES, instance=request.user.id)

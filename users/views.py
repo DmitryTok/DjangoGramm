@@ -7,10 +7,12 @@ from django.shortcuts import redirect, render
 from django.utils.http import urlsafe_base64_decode
 from django.views import View
 
+from djangogramm_app.models import Post
 from email_veryfi.send_email_for_verify import send_email_for_verify
 from users.forms import (
     CustomAuthenticationForm,
     ProfileForm,
+    UserAvatarForm,
     UserRegisterForm,
     UserUpdateForm,
 )
@@ -74,19 +76,23 @@ class ProfileSettings(View):
     def get(self, request):
         context = {
             'profile_form': ProfileForm(),
+            'profile_avatar_form': UserAvatarForm()
         }
         return render(request, self.template_name, context)
 
     def post(self, request):
         profile_form = ProfileForm(request.POST, instance=request.user)
+        profile_avatar_form = UserAvatarForm(request.POST or None, request.FILES or None, instance=request.user)
 
-        if profile_form.is_valid():
+        if profile_form.is_valid() and profile_avatar_form.is_valid():
             profile_form.save()
+            profile_avatar_form.save()
             return redirect('index')
         else:
             profile_form = ProfileForm(request.POST, instance=request.user)
         context = {
             'profile_form': profile_form,
+            'profile_avatar_form': profile_avatar_form
         }
         return render(request, self.template_name, context)
 
@@ -97,8 +103,10 @@ class Profile(View):
     def get(self, request, user_id):
         if request.user.is_authenticated:
             user = User.objects.get(id=user_id)
+            posts = Post.objects.filter(user__id=user_id).order_by('pub_date')
             context = {
                 'user': user,
+                'posts': posts
             }
             return render(request, self.template_name, context)
         else:
@@ -113,7 +121,8 @@ class UpdateProfile(View):
         if request.user.is_authenticated:
             context = {
                 'extra_fields_form': ProfileForm(),
-                'common_form': UserUpdateForm()
+                'common_form': UserUpdateForm(),
+                'profile_avatar_form': UserAvatarForm()
             }
             return render(request, self.template_name, context)
         else:
@@ -129,15 +138,18 @@ class UpdateProfile(View):
                 request.FILES or None,
                 instance=current_user
             )
-            if common_form.is_valid() and extra_fields_form.is_valid():
+            profile_avatar_form = UserAvatarForm(request.POST or None, request.FILES or None, instance=current_user)
+            if common_form.is_valid() and extra_fields_form.is_valid() and profile_avatar_form.is_valid():
                 common_form.save()
                 extra_fields_form.save()
+                profile_avatar_form.save()
                 messages.success(request, ('Your profile has been updated'))
                 return redirect('index')
             else:
                 context = {
                     'extra_fields_form': extra_fields_form,
-                    'common_form': common_form
+                    'common_form': common_form,
+                    'profile_avatar_form': profile_avatar_form
                 }
                 return render(request, self.template_name, context)
         else:
