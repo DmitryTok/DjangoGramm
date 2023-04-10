@@ -5,7 +5,7 @@
     <hr>
     {% for post in posts %}
             <div class="card">
-              <div class="card-body">
+               <div class="card-body">
                   <div class="container">
                       <p>
                         {% if post.user.avatar %}
@@ -16,22 +16,29 @@
                               <div class="col-md-2">
                                   <img src="{% static 'images/default_user_pic.png' %}" width=200 height=200 class="img-fluid rounded-start" alt="Profile">
                               </div>
-                          {% endif %}
+                        {% endif %}
                       <br>
                       <h3>User: <a href="{% url 'profile' post.user.id %}">{{ post.user.username }}</a></h3>
                       </p>
                       <div class="alert alert-secondary" role="alert">
                             <p>{{ post }}</p>
-                            Post publication date: {{ post.pub_date|date:"d.m.Y" }}
+                            {% for tag in post.tags.all %}
+                                #{{ tag }}
+                            {% endfor %}
                       </div>
-                      <div class="alert alert-info" role="alert">
-                          {% for tag in post.tags.all %}
-                            #{{ tag }}
-                          {% endfor %}
-                      </div>
-                      Likes {{ post.likes_count }} <a href="{% url 'post_like' post.id %}">Like</a>
+                      <p>Post publication date: {{ post.pub_date|date:"d.m.Y" }}</p>
+                      {% if request.user.is_authenticated %}
+                      <form action="{% url 'post_like' post.id %}" method="post">
+                          {% csrf_token %}
+                          {% if user in post.likes.all %}
+                            Likes {{ post.likes_count }} <button type="submit" class="btn btn-primary">Like</button>
+                          {% else %}
+                            Likes {{ post.likes_count }} <button type="submit" class="btn btn-outline-primary">Like</button>
+                          {% endif %}
+                      </form>
+                      {% endif %}
                   </div>
-              </div>
+               </div>
             </div>
             <br>
     {% endfor %}

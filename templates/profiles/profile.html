@@ -43,18 +43,20 @@
         <div class="container">
             <div class="alert alert-secondary" role="alert">
                 <p>{{ post }}</p>
-                Post publication date: {{ post.pub_date|date:"d.m.Y" }}
-            </div>
-            <div class="alert alert-info" role="alert">
                 {% for tag in post.tags.all %}
                     #{{ tag }}
                 {% endfor %}
             </div>
-        </div>
+            <p>Post publication date: {{ post.pub_date|date:"d.m.Y" }}</p>
+            <div class="alert alert-primary col-md-1" role="alert">
+                Likes {{ post.likes_count }}
+            </div>
+            <p>
         {% if request.user.id == user.id %}
-        <a href="{% url 'post_update' post.id  %}" class="btn btn-outline-secondary">Update Post</a>
-        <a href="{% url 'post_delete' post.id %}" class="btn btn-outline-danger">Delete Post</a>
+            <a href="{% url 'post_update' post.id  %}" class="btn btn-outline-secondary">Update Post</a>
+            <a href="{% url 'post_delete' post.id %}" class="btn btn-outline-danger">Delete Post</a>
         {% endif %}
+        </div>
     </div>
 </div>
 <br>

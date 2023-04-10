@@ -11,7 +11,9 @@ class PostView(View):
 
     def get(self, request):
         posts = Post.objects.all().order_by('-pub_date')
+        user = request.user
         context = {
+            'user': user,
             'posts': posts,
         }
         return render(request, self.template_name, context)
@@ -133,17 +135,15 @@ class DeletePostView(View):
 
 class LikePostView(View):
 
-    def get(self, request, post_id):
-        return redirect('index')
-
     def post(self, request, post_id):
         if request.user.is_authenticated:
-            post = get_object_or_404(Post, id=post_id)
+            like_post = get_object_or_404(Post, id=post_id)
             user = request.user
-            if user in post.likes.all():
-                post.likes.remove(user)
+            if user in like_post.likes.all():
+                like_post.likes.remove(user)
+                return redirect('index')
             else:
-                post.likes.add(user)
+                like_post.likes.add(user)
             return redirect('index')
         else:
             messages.success(request, ('You Must Be Loged In To View This Page'))
