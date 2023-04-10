@@ -14,15 +14,15 @@
         </form>
             {% endif %}
             {% if user.avatar %}
-        <div class="card mb-3" style="max-width: 780px;">
-          <div class="row g-0">
+        <div class="col mb-3" style="max-width: 780px;">
             <div class="col-md-4">
               <img src="{{ user.avatar.url }}" class="img-fluid rounded-start" alt="Profile">
             </div>
               {% else %}
-              <div class="col-md-2">
-                  <img src="{% static 'images/default_user_pic.png' %}" class="img-fluid rounded-start" alt="Profile">
+              <div class="col-md-4">
+                  <img src="{% static 'images/default_user_pic.png' %}" width=300 height=300 class="img-fluid rounded-start" alt="Profile">
               </div>
+        </div>
               {% endif %}
                 <div class="col-md-8">
                     <div class="card-body">
@@ -30,6 +30,7 @@
                         <p>Email: {{ user.email }}</p>
                         <p>Full name: {{ user.full_name }}</p>
                         <p>Bio: {{ user.bio }}</p>
+                        <p>Posts: {{ post_count }}</p>
                     </div>
                 </div>
           </div>
@@ -38,9 +39,6 @@
 {% for post in posts %}
 <div class="card">
     <div class="card-body">
-        <div class="container">
-            image
-        </div>
         <br>
         <div class="container">
             <div class="alert alert-secondary" role="alert">
@@ -53,6 +51,10 @@
                 {% endfor %}
             </div>
         </div>
+        {% if request.user.id == user.id %}
+        <a href="{% url 'post_update' post.id  %}" class="btn btn-outline-secondary">Update Post</a>
+        <a href="{% url 'post_delete' post.id %}" class="btn btn-outline-danger">Delete Post</a>
+        {% endif %}
     </div>
 </div>
 <br>

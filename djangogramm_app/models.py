@@ -26,6 +26,14 @@ class Post(models.Model):
         blank=True,
         related_name='post_tag'
     )
+    likes = models.ManyToManyField(
+        User,
+        related_name='post_likes',
+        blank=True
+    )
+
+    def likes_count(self):
+        return self.likes.count()
 
     def __str__(self):
         return self.text

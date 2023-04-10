@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Delete Post</h1>
+    <hr>
+    <h4>Confirm to delete Post: {{ post }}</h4>
+    <br>
+    {% if request.user.is_authenticated %}
+        <form action="{% url 'post_delete' post.id %}" method="post">
+            {% csrf_token %}
+            <a href="{% url 'profile' request.user.id %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    {% endif %}
+{% endblock %}

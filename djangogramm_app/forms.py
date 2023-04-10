@@ -11,15 +11,15 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        exclude = ('user', 'tags')
+        exclude = ('user', 'tags', 'likes')
 
 
 class TagForm(forms.ModelForm):
-    tag = forms.CharField(
+    tags = forms.CharField(
         max_length=50,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
 
     class Meta:
         model = Tag
-        fields = ('tag',)
+        fields = ('tags',)

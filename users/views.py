@@ -104,9 +104,11 @@ class Profile(View):
         if request.user.is_authenticated:
             user = User.objects.get(id=user_id)
             posts = Post.objects.filter(user__id=user_id).order_by('pub_date')
+            post_count = Post.objects.filter(user__id=user_id).count()
             context = {
                 'user': user,
-                'posts': posts
+                'posts': posts,
+                'post_count': post_count
             }
             return render(request, self.template_name, context)
         else:
@@ -119,10 +121,11 @@ class UpdateProfile(View):
 
     def get(self, request):
         if request.user.is_authenticated:
+            current_user = User.objects.get(id=request.user.id)
             context = {
-                'extra_fields_form': ProfileForm(),
-                'common_form': UserUpdateForm(),
-                'profile_avatar_form': UserAvatarForm()
+                'extra_fields_form': ProfileForm(instance=current_user),
+                'common_form': UserUpdateForm(instance=current_user),
+                'profile_avatar_form': UserAvatarForm(instance=current_user)
             }
             return render(request, self.template_name, context)
         else:

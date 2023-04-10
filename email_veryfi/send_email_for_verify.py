@@ -6,6 +6,23 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 
+def gen_message(get_context):
+    message = render_to_string(
+        'registration/verify_email.html',
+        context=get_context,
+    )
+    return message
+
+
+def send_email_to_user(get_message, get_user):
+    email = EmailMessage(
+        'Verify email',
+        get_message,
+        to=[get_user.email],
+    )
+    return email.send()
+
+
 def send_email_for_verify(request, user):
     current_site = get_current_site(request)
     context = {
@@ -14,13 +31,5 @@ def send_email_for_verify(request, user):
         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
         'token': token_generator.make_token(user),
     }
-    message = render_to_string(
-        'registration/verify_email.html',
-        context=context,
-    )
-    email = EmailMessage(
-        'Verify email',
-        message,
-        to=[user.email],
-    )
-    email.send()
+    gen_message(context)
+    send_email_to_user(gen_message(context), user)
