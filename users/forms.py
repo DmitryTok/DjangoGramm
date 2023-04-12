@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.forms import EmailInput, Textarea, TextInput
 from django.utils.translation import gettext_lazy as _
 
+from djangogramm_app.models import Pictures
 from email_veryfi.send_email_for_verify import send_email_for_verify
 from users.models import User
 
@@ -66,6 +67,17 @@ class ProfileForm(forms.ModelForm):
         fields = ('full_name', 'bio')
 
 
+class PictureFormAvatar(forms.ModelForm):
+    picture = forms.ImageField(
+        label='Avatar',
+        widget=forms.ClearableFileInput(attrs={'multiple': False})
+    )
+
+    class Meta:
+        model = Pictures
+        fields = ('picture',)
+
+
 class UserUpdateForm(forms.ModelForm):
     username = forms.CharField(
         label=_('Username'),
@@ -77,11 +89,3 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('username',)
-
-
-class UserAvatarForm(forms.ModelForm):
-    avatar = forms.ImageField(label='Avatar', required=False)
-
-    class Meta:
-        model = User
-        fields = ('avatar',)

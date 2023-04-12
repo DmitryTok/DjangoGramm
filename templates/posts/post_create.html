@@ -3,9 +3,10 @@
 {% block content %}
     <h1>Create Post</h1>
     <hr>
-    <form method="post">
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ post_form.as_p }}
+        {{ picture_form.as_p }}
         {{ tag_form.as_p }}
         <button type="submit" class="btn btn-success">Create</button>
     </form>

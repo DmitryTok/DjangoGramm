@@ -3,6 +3,8 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from djangogramm_app.models import Pictures
+
 
 class User(AbstractUser):
     email = models.EmailField(
@@ -16,10 +18,11 @@ class User(AbstractUser):
     )
     full_name = models.CharField(max_length=50)
     bio = models.TextField(max_length=1500)
-    avatar = models.ImageField(
-        upload_to='avatars/',
-        null=True,
-        blank=True
+    avatar = models.ForeignKey(
+        Pictures,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True
     )
     is_email_verify = models.BooleanField(default=False)
 

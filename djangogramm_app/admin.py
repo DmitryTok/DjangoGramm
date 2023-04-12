@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from djangogramm_app.models import Post, Tag
+from djangogramm_app.models import Pictures, Post, Tag
 
 
 @admin.register(Post)
@@ -8,19 +8,16 @@ class PostAdmin(admin.ModelAdmin):
     list_display = (
         'user',
         'text',
-        'picture',
         'pub_date',
     )
     list_filter = (
         'user',
         'text',
-        'picture',
         'pub_date',
     )
     search_fields = (
         'user',
         'text',
-        'picture',
         'pub_date',
     )
 
@@ -38,4 +35,20 @@ class TagAdmin(admin.ModelAdmin):
     search_fields = (
         'id',
         'name',
+    )
+
+
+@admin.register(Pictures)
+class PictureAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'picture',
+    )
+    list_filter = (
+        'id',
+        'picture',
+    )
+    search_fields = (
+        'id',
+        'picture',
     )

@@ -1,6 +1,11 @@
 from django.db import models
 
-from users.models import User
+
+class Pictures(models.Model):
+    picture = models.ImageField(upload_to='pictures')
+
+    def __str__(self):
+        return f'Image {self.picture}'
 
 
 class Tag(models.Model):
@@ -14,12 +19,16 @@ class Tag(models.Model):
 
 class Post(models.Model):
     user = models.ForeignKey(
-        User,
+        'users.User',
         on_delete=models.CASCADE,
         related_name='post_user'
     )
     text = models.TextField(max_length=2000)
-    picture = models.ImageField(upload_to='post_image/', blank=True, null=True)
+    pictures = models.ManyToManyField(
+        Pictures,
+        blank=True,
+        related_name='post_picture'
+    )
     pub_date = models.DateTimeField(auto_now_add=True)
     tags = models.ManyToManyField(
         Tag,
@@ -27,7 +36,7 @@ class Post(models.Model):
         related_name='post_tag'
     )
     likes = models.ManyToManyField(
-        User,
+        'users.User',
         related_name='post_likes',
         blank=True
     )

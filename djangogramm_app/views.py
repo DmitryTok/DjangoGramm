@@ -2,8 +2,8 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 
-from djangogramm_app.forms import PostForm, TagForm
-from djangogramm_app.models import Post, Tag
+from djangogramm_app.forms import PictureFormPost, PostForm, TagForm
+from djangogramm_app.models import Pictures, Post, Tag
 
 
 class PostView(View):
@@ -24,11 +24,13 @@ class PostCreateView(View):
 
     def get(self, request):
         if request.user.is_authenticated:
+            picture_form = PictureFormPost()
             post_form = PostForm()
             tag_form = TagForm()
             context = {
                 'post_form': post_form,
-                'tag_form': tag_form
+                'tag_form': tag_form,
+                'picture_form': picture_form
             }
             return render(request, self.template_name, context)
         else:
@@ -37,25 +39,36 @@ class PostCreateView(View):
 
     def post(self, request):
         if request.user.is_authenticated:
+            picture_form = PictureFormPost(request.POST, request.FILES)
             tag_form = TagForm(request.POST)
             post_form = PostForm(request.POST or None, request.FILES or None)
-            if post_form.is_valid() and tag_form.is_valid():
+            images = request.FILES.getlist('picture')
+            if post_form.is_valid() and tag_form.is_valid() and picture_form.is_valid():
                 post = post_form.save(commit=False)
                 post.user = request.user
                 post.save()
                 tags_names = tag_form.cleaned_data['tags'].split(',')
                 tags = []
+                imgs = []
                 for tag_name in tags_names:
                     tag, created = Tag.objects.get_or_create(name=tag_name.strip())
                     tags.append(tag)
+                for img in images:
+                    image = Pictures(picture=img)
+                    image.save()
+                    imgs.append(image)
                 post.tags.set(tags)
+                post.pictures.set(imgs)
+                post_form.save_m2m()
                 return redirect('index')
         else:
             post_form = PostForm(request.POST, request.FILES, instance=request.user.id)
             tag_form = TagForm(request.POST)
+            picture_form = PictureFormPost(request.POST, request.FILES)
         context = {
             'post_form': post_form,
-            'tag_form': tag_form
+            'tag_form': tag_form,
+            'picture_form': picture_form
         }
         return render(request, self.template_name, context)
 
@@ -66,44 +79,51 @@ class UpdatePostView(View):
     def get(self, request, post_id):
         if request.user.is_authenticated:
             current_post = Post.objects.get(id=post_id)
+            picture_form = PictureFormPost(instance=current_post.pictures.all())
             post_form = PostForm(instance=current_post)
-            tag_form = TagForm()
+            tag_form = TagForm(initial={'tags': current_post.tags.all()})
             context = {
                 'post_form': post_form,
                 'tag_form': tag_form,
-                'current_post': current_post
+                'picture_form': picture_form
             }
             return render(request, self.template_name, context)
         else:
             messages.success(request, ('You Must Be Loged In To View This Page'))
             return redirect('login')
 
-    def post(self, request, post_id):
+    def post(self, request):
         if request.user.is_authenticated:
-            current_post = Post.objects.get(id=post_id)
+            picture_form = PictureFormPost(request.POST, request.FILES)
             tag_form = TagForm(request.POST)
-            post_form = PostForm(request.POST or None, request.FILES or None, instance=current_post)
-            if post_form.is_valid() and tag_form.is_valid():
+            post_form = PostForm(request.POST or None, request.FILES or None)
+            images = request.FILES.getlist('picture')
+            if post_form.is_valid() and tag_form.is_valid() and picture_form.is_valid():
                 post = post_form.save(commit=False)
                 post.user = request.user
                 post.save()
                 tags_names = tag_form.cleaned_data['tags'].split(',')
                 tags = []
+                imgs = []
                 for tag_name in tags_names:
                     tag, created = Tag.objects.get_or_create(name=tag_name.strip())
                     tags.append(tag)
+                for img in images:
+                    image = Pictures(picture=img)
+                    image.save()
+                    imgs.append(image)
                 post.tags.set(tags)
-                messages.success(request, ('Your Post Has Been Updated'))
+                post.pictures.set(imgs)
+                post_form.save_m2m()
                 return redirect('index')
-            else:
-                messages.success(request, ('You Must Be Loged In To View This Page'))
-                return redirect('login')
         else:
-            post_form = PostForm(request.POST, request.FILES)
+            post_form = PostForm(request.POST, request.FILES, instance=request.user.id)
             tag_form = TagForm(request.POST)
+            picture_form = PictureFormPost(request.POST, request.FILES)
         context = {
             'post_form': post_form,
-            'tag_form': tag_form
+            'tag_form': tag_form,
+            'picture_form': picture_form
         }
         return render(request, self.template_name, context)
 
