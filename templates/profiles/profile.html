@@ -8,7 +8,7 @@
             {% csrf_token %}
             {% if request.user.id == user.id %}
                 <p>
-                    <a href="{% url 'update_profile'  %}" class="btn btn-outline-secondary">Update Profile</a>
+                    <a href="{% url 'update_profile'  %}" class="btn btn-outline-secondary">Edit Profile</a>
                     <a href="{% url 'delete_profile' %}" class="btn btn-outline-danger">Delete Profile</a>
                 </p>
         </form>
@@ -20,7 +20,7 @@
             </div>
               {% else %}
               <div class="col-md-4">
-                  <img src="{% static 'images/default_user_pic.png' %}" width=250 height=250 class="rounded-circle" alt="Profile">
+                  <img src="{% static 'images/default_user_avatar.png' %}" width=250 height=250 class="rounded-circle" alt="Profile">
               </div>
         </div>
               {% endif %}
@@ -57,7 +57,7 @@
             </div>
             <p>
         {% if request.user.id == user.id %}
-            <a href="{% url 'post_update' post.id  %}" class="btn btn-outline-secondary">Update Post</a>
+            <a href="{% url 'post_update' post.id  %}" class="btn btn-outline-secondary">Edit Post</a>
             <a href="{% url 'post_delete' post.id %}" class="btn btn-outline-danger">Delete Post</a>
         {% endif %}
         </div>

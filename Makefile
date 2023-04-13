@@ -26,7 +26,7 @@ superuser: migrate
 
 .PHONY: flake8
 flake8:
-	 docker-compose run web flake8 --exclude=./venv/
+	 docker-compose run web flake8
 
 .PHONY: isort
 isort:

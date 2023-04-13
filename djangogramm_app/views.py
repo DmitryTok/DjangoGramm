@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 
@@ -9,7 +10,7 @@ from djangogramm_app.models import Pictures, Post, Tag
 class PostView(View):
     template_name = 'index.html'
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         posts = Post.objects.all().order_by('-pub_date')
         user = request.user
         context = {
@@ -22,7 +23,7 @@ class PostView(View):
 class PostCreateView(View):
     template_name = 'posts/post_create.html'
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
             picture_form = PictureFormPost()
             post_form = PostForm()
@@ -37,7 +38,7 @@ class PostCreateView(View):
             messages.success(request, ('You Must Be Loged In To View This Page'))
             return redirect('login')
 
-    def post(self, request):
+    def post(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
             picture_form = PictureFormPost(request.POST, request.FILES)
             tag_form = TagForm(request.POST)
@@ -76,12 +77,12 @@ class PostCreateView(View):
 class UpdatePostView(View):
     template_name = 'posts/post_update.html'
 
-    def get(self, request, post_id):
+    def get(self, request: HttpRequest, post_id: int) -> HttpResponse:
         if request.user.is_authenticated:
             current_post = Post.objects.get(id=post_id)
-            picture_form = PictureFormPost(instance=current_post.pictures.all())
+            picture_form = PictureFormPost()
             post_form = PostForm(instance=current_post)
-            tag_form = TagForm(initial={'tags': current_post.tags.all()})
+            tag_form = TagForm()
             context = {
                 'post_form': post_form,
                 'tag_form': tag_form,
@@ -92,7 +93,7 @@ class UpdatePostView(View):
             messages.success(request, ('You Must Be Loged In To View This Page'))
             return redirect('login')
 
-    def post(self, request):
+    def post(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
             picture_form = PictureFormPost(request.POST, request.FILES)
             tag_form = TagForm(request.POST)
@@ -131,7 +132,7 @@ class UpdatePostView(View):
 class DeletePostView(View):
     template_name = 'posts/post_delete.html'
 
-    def get(self, request, post_id):
+    def get(self, request: HttpRequest, post_id: int) -> HttpResponse:
         if request.user.is_authenticated:
             post = Post.objects.get(id=post_id)
             context = {
@@ -142,7 +143,7 @@ class DeletePostView(View):
             messages.success(request, ('You Must Be Loged In To View This Page'))
             return redirect('login')
 
-    def post(self, request, post_id):
+    def post(self, request: HttpRequest, post_id: int) -> HttpResponse:
         if request.user.is_authenticated:
             post = Post.objects.get(id=post_id)
             post.delete()
@@ -155,7 +156,7 @@ class DeletePostView(View):
 
 class LikePostView(View):
 
-    def post(self, request, post_id):
+    def post(self, request: HttpRequest, post_id: int) -> HttpResponse:
         if request.user.is_authenticated:
             like_post = get_object_or_404(Post, id=post_id)
             user = request.user

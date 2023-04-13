@@ -15,10 +15,9 @@ class PostForm(forms.ModelForm):
 
 
 class TagForm(forms.ModelForm):
-    tags = forms.ModelMultipleChoiceField(
-        queryset=Tag.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        required=False
+    tags = forms.CharField(
+        max_length=50,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
     )
 
     class Meta:

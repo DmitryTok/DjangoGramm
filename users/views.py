@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.tokens import default_token_generator as token_generator
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import ValidationError
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils.http import urlsafe_base64_decode
 from django.views import View
@@ -25,7 +26,7 @@ class CustomLoginView(LoginView):
 
 class EmailVerify(View):
 
-    def get(self, request, uidb64, token):
+    def get(self, request: HttpRequest, uidb64: str, token: str) -> HttpResponse:
         user = self.get_user(uidb64)
         if user is not None and token_generator.check_token(user, token):
             user.is_email_verify = True
@@ -35,7 +36,7 @@ class EmailVerify(View):
         return redirect('invalid_verify')
 
     @staticmethod
-    def get_user(uidb64):
+    def get_user(uidb64: str) -> User:
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
             user = User.objects.get(pk=uid)
@@ -48,13 +49,13 @@ class EmailVerify(View):
 class Register(View):
     template_name = 'registration/register.html'
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         context = {
             'form': UserRegisterForm()
         }
         return render(request, self.template_name, context)
 
-    def post(self, request):
+    def post(self, request: HttpRequest) -> HttpResponse:
         form = UserRegisterForm(request.POST)
 
         if form.is_valid():
@@ -73,14 +74,14 @@ class Register(View):
 class ProfileSettings(View):
     template_name = 'profiles/profile_settings.html'
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         context = {
             'profile_form': ProfileForm(instance=request.user),
             'profile_avatar_form': PictureFormAvatar(instance=request.user.avatar)
         }
         return render(request, self.template_name, context)
 
-    def post(self, request):
+    def post(self, request: HttpRequest) -> HttpResponse:
         profile_form = ProfileForm(request.POST, instance=request.user)
         profile_avatar_form = PictureFormAvatar(
             request.POST or None,
@@ -114,7 +115,7 @@ class ProfileSettings(View):
 class Profile(View):
     template_name = 'profiles/profile.html'
 
-    def get(self, request, user_id):
+    def get(self, request: HttpRequest, user_id: int) -> HttpResponse:
         if request.user.is_authenticated:
             user = User.objects.get(id=user_id)
             posts = Post.objects.filter(user__id=user_id).order_by('pub_date')
@@ -133,7 +134,7 @@ class Profile(View):
 class UpdateProfile(View):
     template_name = 'profiles/update_profile.html'
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
             current_user = User.objects.get(id=request.user.id)
             context = {
@@ -146,7 +147,7 @@ class UpdateProfile(View):
             messages.success(request, ('You Must Be Loged In To View This Page'))
             return redirect('login')
 
-    def post(self, request):
+    def post(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
             current_user = User.objects.get(id=request.user.id)
             common_form = UserUpdateForm(request.POST or None, request.FILES or None, instance=current_user)
@@ -186,7 +187,7 @@ class UpdateProfile(View):
 class DeleteProfile(View):
     template_name = 'profiles/delete_profile.html'
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
             user = request.user
             context = {
@@ -198,7 +199,7 @@ class DeleteProfile(View):
             return redirect('login')
 
     @staticmethod
-    def post(request):
+    def post(request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
             request.user.delete()
         else:
@@ -210,7 +211,7 @@ class DeleteProfile(View):
 class ProfileList(View):
     template_name = 'profiles/profile_list.html'
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
             all_users = User.objects.exclude(id=request.user.id)
             context = {
