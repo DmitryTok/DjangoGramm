@@ -10,7 +10,7 @@ class Pictures(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(
-        max_length=50,
+        max_length=300,
     )
 
     def __str__(self):
@@ -40,9 +40,17 @@ class Post(models.Model):
         related_name='post_likes',
         blank=True
     )
+    dislikes = models.ManyToManyField(
+        'users.User',
+        related_name='post_dislikes',
+        blank=True
+    )
 
     def likes_count(self):
         return self.likes.count()
+
+    def dislikes_count(self):
+        return self.dislikes.count()
 
     def __str__(self):
         return self.text

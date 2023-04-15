@@ -6,7 +6,7 @@
     <h4>Confirm to delete profile: {{ user.username }}</h4>
     <br>
     {% if request.user.is_authenticated %}
-        <form action="{% url 'delete_profile' %}" method="post">
+        <form action="{% url 'delete_profile' user.id %}" method="post">
             {% csrf_token %}
             <a href="{% url 'profile' request.user.id %}" class="btn btn-secondary">Cancel</a>
             <button type="submit" class="btn btn-danger">Delete</button>

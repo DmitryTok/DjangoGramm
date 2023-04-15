@@ -29,7 +29,7 @@ urlpatterns = [
     path('profile/<user_id>', Profile.as_view(), name='profile'),
     path('profile_list/', ProfileList.as_view(), name='profile_list'),
     path('update_profile/', UpdateProfile.as_view(), name='update_profile'),
-    path('delete_profile/', DeleteProfile.as_view(), name='delete_profile'),
+    path('delete_profile/<user_id>', DeleteProfile.as_view(), name='delete_profile'),
     path('profile_settings/', ProfileSettings.as_view(), name='profile_settings'),
     path(
         'confirm_email/',

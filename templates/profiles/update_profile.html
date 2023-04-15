@@ -9,6 +9,7 @@
         {{ extra_fields_form.as_p }}
         {{ profile_avatar_form }}
     <p><br>
+    <a href="{% url 'profile' request.user.id %}" class="btn btn-secondary">Cancel</a>
     <button type="submit" class="btn btn-success">Submit</button>
     </form>
 {% endblock %}

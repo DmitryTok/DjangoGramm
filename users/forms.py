@@ -70,7 +70,8 @@ class ProfileForm(forms.ModelForm):
 class PictureFormAvatar(forms.ModelForm):
     picture = forms.ImageField(
         label='Avatar',
-        widget=forms.ClearableFileInput(attrs={'multiple': False})
+        widget=forms.ClearableFileInput(attrs={'multiple': False}),
+        required=False
     )
 
     class Meta:

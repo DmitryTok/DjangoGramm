@@ -10,7 +10,7 @@
                       <h3>User: <a href="{% url 'profile' post.user.id %}">{{ post.user.username }}</a></h3>
                       <br>
                       {% for images in post.pictures.all %}
-                        <img src="{{ images.picture.url }}" width=200 height=200 class="rounded" alt="Post">
+                        <img src="{{ images.picture.url }}" width=200 class="rounded" alt="{{ images.picture.url }}">
                       {% endfor %}
                       <p>
                       <div class="alert alert-secondary" role="alert">
@@ -22,14 +22,30 @@
                       </div>
                       <p>Post publication date: {{ post.pub_date|date:"d.m.Y" }}</p>
                       {% if request.user.is_authenticated %}
-                      <form action="{% url 'post_like' post.id %}" method="post">
-                          {% csrf_token %}
-                          {% if user in post.likes.all %}
-                            Likes {{ post.likes_count }} <button type="submit" class="btn btn-primary">Like</button>
-                          {% else %}
-                            Likes {{ post.likes_count }} <button type="submit" class="btn btn-outline-primary">Like</button>
-                          {% endif %}
-                      </form>
+                      <div class="container">
+                           <div class="row">
+                               <div class="col-1">
+                                   <form action="{% url 'post_like' post.id %}" method="post">
+                                       {% csrf_token %}
+                                    {% if user in post.likes.all %}
+                                        <button type="submit" class="btn btn-primary">Likes {{ post.likes_count }}</button>
+                                    {% else %}
+                                        <button type="submit" class="btn btn-outline-primary">Likes {{ post.likes_count }}</button>
+                                    {% endif %}
+                                   </form>
+                               </div>
+                               <div class="col-2">
+                                   <form action="{% url 'post_dislike' post.id %}" method="post">
+                                        {% csrf_token %}
+                                    {% if user in post.dislikes.all %}
+                                        <button type="submit" class="btn btn-danger">Dislikes: {{ post.dislikes_count }}</button>
+                                    {% else %}
+                                        <button type="submit" class="btn btn-outline-danger">Dislikes: {{ post.dislikes_count }}</button>
+                                    {% endif %}
+                                   </form>
+                               </div>
+                          </div>
+                      </div>
                       {% endif %}
                   </div>
                </div>

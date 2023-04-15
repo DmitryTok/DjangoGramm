@@ -20,6 +20,7 @@ from users.forms import (
 from users.models import User
 
 
+# TODO: Finish reset password func
 class CustomLoginView(LoginView):
     form_class = CustomAuthenticationForm
 
@@ -96,7 +97,7 @@ class ProfileSettings(View):
                 image = Pictures(picture=avatar)
                 image.save()
                 request.user.avatar = image
-                profile_form.save()
+            profile_form.save()
             return redirect('profile', request.user.id)
         else:
             profile_avatar_form = PictureFormAvatar(
@@ -187,23 +188,25 @@ class UpdateProfile(View):
 class DeleteProfile(View):
     template_name = 'profiles/delete_profile.html'
 
-    def get(self, request: HttpRequest) -> HttpResponse:
-        if request.user.is_authenticated:
-            user = request.user
+    def get(self, request: HttpRequest, user_id) -> HttpResponse:
+        user = User.objects.get(id=user_id)
+        if request.user.is_authenticated and user == request.user:
             context = {
                 'user': user
             }
             return render(request, self.template_name, context)
         else:
-            messages.success(request, ('You Must Be Loged In To View This Page'))
+            messages.error(request, ('You Cannot Delete Other Profiles!'))
             return redirect('login')
 
     @staticmethod
-    def post(request: HttpRequest) -> HttpResponse:
-        if request.user.is_authenticated:
-            request.user.delete()
+    def post(request: HttpRequest, user_id) -> HttpResponse:
+        user = User.objects.get(id=user_id)
+        if request.user.is_authenticated and user == request.user:
+            user.delete()
+            messages.success(request, ('Your Profile Has Been Deleted!'))
         else:
-            messages.success(request, ('You Must Be Loged In To View This Page'))
+            messages.success(request, ('You Must Be Loged In To View This Page!'))
             return redirect('login')
         return redirect('index')
 

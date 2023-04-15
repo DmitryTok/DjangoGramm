@@ -9,22 +9,20 @@
             {% if request.user.id == user.id %}
                 <p>
                     <a href="{% url 'update_profile'  %}" class="btn btn-outline-secondary">Edit Profile</a>
-                    <a href="{% url 'delete_profile' %}" class="btn btn-outline-danger">Delete Profile</a>
+                    <a href="{% url 'delete_profile' user.id %}" class="btn btn-outline-danger">Delete Profile</a>
                 </p>
         </form>
             {% endif %}
             {% if user.avatar.picture %}
-        <div class="col mb-3" style="max-width: 1000px;">
-            <div class="col-md-4">
-              <img src="{{ user.avatar.picture.url }}" width=200 height=200 class="rounded-circle" alt="Profile">
+            <div class="col-md-2">
+              <img src="{{ user.avatar.picture.url }}" class="rounded" alt="{{ user.avatar.picture }}" style="width: 150%; height: 150;">
             </div>
               {% else %}
-              <div class="col-md-4">
-                  <img src="{% static 'images/default_user_avatar.png' %}" width=250 height=250 class="rounded-circle" alt="Profile">
+              <div class="col-md-2">
+                  <img src="{% static 'images/default_user_avatar.png' %}" class="rounded" alt="{{ user.avatar.picture }}" style="width: 100%; height: auto;">
               </div>
-        </div>
               {% endif %}
-                <div class="col-md-8">
+                <div class="col-md-11">
                     <div class="card-body">
                         <p>User: {{ user.username }}</p>
                         <p>Email: {{ user.email }}</p>
@@ -42,7 +40,7 @@
         <br>
         <div class="container">
             {% for images in post.pictures.all %}
-                <img src="{{ images.picture.url }}" width=200 height=200 class="rounded" alt="Post">
+                <img src="{{ images.picture.url }}" width=200 class="rounded" alt="Post">
             {% endfor %}
             <p>
             <div class="alert alert-secondary" role="alert">
@@ -52,15 +50,21 @@
                 {% endfor %}
             </div>
             <p>Post publication date: {{ post.pub_date|date:"d.m.Y" }}</p>
-            <div class="alert alert-primary col-md-1" role="alert">
-                Likes {{ post.likes_count }}
+            <div class="container">
+                <div class="row">
+                        <div class="alert alert-primary col-md-1" role="alert">
+                            Likes {{ post.likes_count }}
+                        </div>
+                        <div class="alert alert-danger col-md-1" role="alert">
+                            Dislikes {{ post.dislikes_count }}
+                        </div>
+                </div>
             </div>
+        </div>
             <p>
         {% if request.user.id == user.id %}
-            <a href="{% url 'post_update' post.id  %}" class="btn btn-outline-secondary">Edit Post</a>
             <a href="{% url 'post_delete' post.id %}" class="btn btn-outline-danger">Delete Post</a>
         {% endif %}
-        </div>
     </div>
 </div>
 <br>
