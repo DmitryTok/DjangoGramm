@@ -4,7 +4,7 @@ from django.contrib.auth.tokens import default_token_generator as token_generato
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import urlsafe_base64_decode
 from django.views import View
 
@@ -20,7 +20,6 @@ from users.forms import (
 from users.models import User
 
 
-# TODO: Finish reset password func
 class CustomLoginView(LoginView):
     form_class = CustomAuthenticationForm
 
@@ -40,7 +39,7 @@ class EmailVerify(View):
     def get_user(uidb64: str) -> User:
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
-            user = User.objects.get(pk=uid)
+            user = get_object_or_404(User, pk=uid)
         except (TypeError, ValueError, OverflowError,
                 User.DoesNotExist, ValidationError):
             user = None
@@ -118,7 +117,7 @@ class Profile(View):
 
     def get(self, request: HttpRequest, user_id: int) -> HttpResponse:
         if request.user.is_authenticated:
-            user = User.objects.get(id=user_id)
+            user = get_object_or_404(User, id=user_id)
             posts = Post.objects.filter(user__id=user_id).order_by('pub_date')
             post_count = Post.objects.filter(user__id=user_id).count()
             context = {
@@ -137,7 +136,7 @@ class UpdateProfile(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
-            current_user = User.objects.get(id=request.user.id)
+            current_user = get_object_or_404(User, id=request.user.id)
             context = {
                 'extra_fields_form': ProfileForm(instance=current_user),
                 'common_form': UserUpdateForm(instance=current_user),
@@ -150,7 +149,7 @@ class UpdateProfile(View):
 
     def post(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
-            current_user = User.objects.get(id=request.user.id)
+            current_user = get_object_or_404(User, id=request.user.id)
             common_form = UserUpdateForm(request.POST or None, request.FILES or None, instance=current_user)
             extra_fields_form = ProfileForm(
                 request.POST or None,
@@ -189,7 +188,7 @@ class DeleteProfile(View):
     template_name = 'profiles/delete_profile.html'
 
     def get(self, request: HttpRequest, user_id) -> HttpResponse:
-        user = User.objects.get(id=user_id)
+        user = get_object_or_404(User, id=user_id)
         if request.user.is_authenticated and user == request.user:
             context = {
                 'user': user
@@ -201,7 +200,7 @@ class DeleteProfile(View):
 
     @staticmethod
     def post(request: HttpRequest, user_id) -> HttpResponse:
-        user = User.objects.get(id=user_id)
+        user = get_object_or_404(User, id=user_id)
         if request.user.is_authenticated and user == request.user:
             user.delete()
             messages.success(request, ('Your Profile Has Been Deleted!'))

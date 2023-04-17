@@ -78,7 +78,7 @@ class DeletePostView(View):
     template_name = 'posts/post_delete.html'
 
     def get(self, request: HttpRequest, post_id: int) -> HttpResponse:
-        post = Post.objects.get(id=post_id)
+        post = get_object_or_404(Post, id=post_id)
         if request.user.is_authenticated and post.user == request.user:
             context = {
                 'post': post
@@ -89,7 +89,7 @@ class DeletePostView(View):
             return redirect('index')
 
     def post(self, request: HttpRequest, post_id: int) -> HttpResponse:
-        post = Post.objects.get(id=post_id)
+        post = get_object_or_404(Post, id=post_id)
         if request.user.is_authenticated and post.user == request.user:
             post.delete()
             messages.success(request, ('Your Post Has Been Deleted!'))
@@ -110,6 +110,7 @@ class LikePostView(View):
                 return redirect('index')
             else:
                 like_post.likes.add(user)
+                like_post.dislikes.remove(user)
             return redirect('index')
         else:
             messages.success(request, ('You Must Be Loged In To View This Page!'))
@@ -127,6 +128,7 @@ class DisLikePostView(View):
                 return redirect('index')
             else:
                 dislike_post.dislikes.add(user)
+                dislike_post.likes.remove(user)
             return redirect('index')
         else:
             messages.success(request, ('You Must Be Loged In To View This Page!'))

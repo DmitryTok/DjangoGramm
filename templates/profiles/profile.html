@@ -19,7 +19,7 @@
             </div>
               {% else %}
               <div class="col-md-2">
-                  <img src="{% static 'images/default_user_avatar.png' %}" class="rounded" alt="{{ user.avatar.picture }}" style="width: 100%; height: auto;">
+                  <img src="{% user_static 'images/default_user_avatar.png' %}" class="rounded" alt="{{ user.avatar.picture }}" style="width: 100%; height: auto;">
               </div>
               {% endif %}
                 <div class="col-md-11">
