@@ -2,22 +2,16 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.tokens import default_token_generator as token_generator
 from django.contrib.auth.views import LoginView
-from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
-from django.utils.http import urlsafe_base64_decode
+from django.shortcuts import redirect, render
 from django.views import View
 
 from djangogramm_app.models import Pictures, Post
-from email_veryfi.send_email_for_verify import send_email_for_verify
-from users.forms import (
-    CustomAuthenticationForm,
-    PictureFormAvatar,
-    ProfileForm,
-    UserRegisterForm,
-    UserUpdateForm,
-)
-from users.models import User
+from email_veryfi.send_email_for_veryfi import send_email_for_verify
+from users.forms import CustomAuthenticationForm, PictureFormAvatar, ProfileForm, UserRegisterForm, UserUpdateForm
+from users.repositories import UserRepository
+
+USER_REPOSITORY = UserRepository()
 
 
 class CustomLoginView(LoginView):
@@ -26,24 +20,15 @@ class CustomLoginView(LoginView):
 
 class EmailVerify(View):
 
-    def get(self, request: HttpRequest, uidb64: str, token: str) -> HttpResponse:
-        user = self.get_user(uidb64)
+    @staticmethod
+    def get(request: HttpRequest, uidb64: str, token: str) -> HttpResponse:
+        user = USER_REPOSITORY.get_user(uidb64)
         if user is not None and token_generator.check_token(user, token):
             user.is_email_verify = True
             user.save()
             login(request, user)
             return redirect('profile_settings')
         return redirect('invalid_verify')
-
-    @staticmethod
-    def get_user(uidb64: str) -> User:
-        try:
-            uid = urlsafe_base64_decode(uidb64).decode()
-            user = get_object_or_404(User, pk=uid)
-        except (TypeError, ValueError, OverflowError,
-                User.DoesNotExist, ValidationError):
-            user = None
-        return user
 
 
 class Register(View):
@@ -117,7 +102,7 @@ class Profile(View):
 
     def get(self, request: HttpRequest, user_id: int) -> HttpResponse:
         if request.user.is_authenticated:
-            user = get_object_or_404(User, id=user_id)
+            user = USER_REPOSITORY.get_user_id(user_id)
             posts = Post.objects.filter(user__id=user_id).order_by('pub_date')
             post_count = Post.objects.filter(user__id=user_id).count()
             context = {
@@ -136,7 +121,7 @@ class UpdateProfile(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
-            current_user = get_object_or_404(User, id=request.user.id)
+            current_user = USER_REPOSITORY.get_request_user(request)
             context = {
                 'extra_fields_form': ProfileForm(instance=current_user),
                 'common_form': UserUpdateForm(instance=current_user),
@@ -149,7 +134,7 @@ class UpdateProfile(View):
 
     def post(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
-            current_user = get_object_or_404(User, id=request.user.id)
+            current_user = USER_REPOSITORY.get_request_user(request)
             common_form = UserUpdateForm(request.POST or None, request.FILES or None, instance=current_user)
             extra_fields_form = ProfileForm(
                 request.POST or None,
@@ -188,7 +173,7 @@ class DeleteProfile(View):
     template_name = 'profiles/delete_profile.html'
 
     def get(self, request: HttpRequest, user_id) -> HttpResponse:
-        user = get_object_or_404(User, id=user_id)
+        user = USER_REPOSITORY.get_user_id(user_id)
         if request.user.is_authenticated and user == request.user:
             context = {
                 'user': user
@@ -196,17 +181,17 @@ class DeleteProfile(View):
             return render(request, self.template_name, context)
         else:
             messages.error(request, ('You Cannot Delete Other Profiles!'))
-            return redirect('login')
+            return redirect('profile', request.user.id)
 
     @staticmethod
     def post(request: HttpRequest, user_id) -> HttpResponse:
-        user = get_object_or_404(User, id=user_id)
+        user = USER_REPOSITORY.get_user_id(user_id)
         if request.user.is_authenticated and user == request.user:
-            user.delete()
+            USER_REPOSITORY.delete_user_by_id(user_id)
             messages.success(request, ('Your Profile Has Been Deleted!'))
         else:
             messages.success(request, ('You Must Be Loged In To View This Page!'))
-            return redirect('login')
+            return redirect('profile', request.user.id)
         return redirect('index')
 
 
@@ -215,7 +200,7 @@ class ProfileList(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
-            all_users = User.objects.exclude(id=request.user.id)
+            all_users = USER_REPOSITORY.exclude_user(request)
             context = {
                 'all_users': all_users,
             }

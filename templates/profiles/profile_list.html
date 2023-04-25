@@ -6,11 +6,11 @@
     <hr>
     <ul class="list-group">
         {% for user in all_users %}
-            {% if user.avatar %}
+            {% if user.avatar.picture %}
         <div class="col mb-3" style="max-width: 780px;">
           <div class="row g-0">
             <div class="col-md-4">
-              <img src="{{ user.avatar.url }}" class="img-fluid rounded-start" alt="Profile">
+              <img src="{{ user.avatar.picture.url }}" class="img-fluid rounded-start" alt="Profile">
             </div>
             {% else %}
               <div class="row g-0">

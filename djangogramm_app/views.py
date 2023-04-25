@@ -1,17 +1,22 @@
 from django.contrib import messages
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.views import View
 
 from djangogramm_app.forms import PictureFormPost, PostForm, TagForm
-from djangogramm_app.models import Pictures, Post, Tag
+from djangogramm_app.utils import add_dislike, add_like, tags
+
+from .repositories import PictureRepository, PostRepository
+
+POST_REPOSITORY = PostRepository()
+PICTURE_REPOSITORY = PictureRepository()
 
 
 class PostView(View):
     template_name = 'index.html'
 
     def get(self, request: HttpRequest) -> HttpResponse:
-        posts = Post.objects.all().order_by('-pub_date')
+        posts = POST_REPOSITORY.get_all_posts()
         user = request.user
         context = {
             'user': user,
@@ -43,22 +48,18 @@ class PostCreateView(View):
             picture_form = PictureFormPost(request.POST, request.FILES)
             tag_form = TagForm(request.POST)
             post_form = PostForm(request.POST or None, request.FILES or None)
-            images = request.FILES.getlist('picture')
             if post_form.is_valid() and tag_form.is_valid() and picture_form.is_valid():
                 post = post_form.save(commit=False)
                 post.user = request.user
                 post.save()
                 tags_names = tag_form.cleaned_data['tags'].split(',')
-                tags = []
+                images = request.FILES.getlist('picture')
                 imgs = []
-                for tag_name in tags_names:
-                    tag, created = Tag.objects.get_or_create(name=tag_name.strip())
-                    tags.append(tag)
                 for img in images:
-                    image = Pictures(picture=img)
+                    image = PICTURE_REPOSITORY.create(picture=img, use_get_or_create=False)
                     image.save()
                     imgs.append(image)
-                post.tags.set(tags)
+                post.tags.set(tags(tags_names))
                 post.pictures.set(imgs)
                 post_form.save_m2m()
                 return redirect('index')
@@ -78,7 +79,7 @@ class DeletePostView(View):
     template_name = 'posts/post_delete.html'
 
     def get(self, request: HttpRequest, post_id: int) -> HttpResponse:
-        post = get_object_or_404(Post, id=post_id)
+        post = POST_REPOSITORY.get_post_by_id(post_id)
         if request.user.is_authenticated and post.user == request.user:
             context = {
                 'post': post
@@ -88,10 +89,11 @@ class DeletePostView(View):
             messages.success(request, ('You Cannot Delete Other Posts!'))
             return redirect('index')
 
-    def post(self, request: HttpRequest, post_id: int) -> HttpResponse:
-        post = get_object_or_404(Post, id=post_id)
+    @staticmethod
+    def post(request: HttpRequest, post_id: int) -> HttpResponse:
+        post = POST_REPOSITORY.get_post_by_id(post_id)
         if request.user.is_authenticated and post.user == request.user:
-            post.delete()
+            POST_REPOSITORY.delete_post_by_id(post_id)
             messages.success(request, ('Your Post Has Been Deleted!'))
         else:
             messages.success(request, ('You Must Be Loged In To View This Page!'))
@@ -101,16 +103,10 @@ class DeletePostView(View):
 
 class LikePostView(View):
 
-    def post(self, request: HttpRequest, post_id: int) -> HttpResponse:
+    @staticmethod
+    def post(request: HttpRequest, post_id: int) -> HttpResponse:
         if request.user.is_authenticated:
-            like_post = get_object_or_404(Post, id=post_id)
-            user = request.user
-            if user in like_post.likes.all():
-                like_post.likes.remove(user)
-                return redirect('index')
-            else:
-                like_post.likes.add(user)
-                like_post.dislikes.remove(user)
+            add_like(request, post_id)
             return redirect('index')
         else:
             messages.success(request, ('You Must Be Loged In To View This Page!'))
@@ -119,16 +115,10 @@ class LikePostView(View):
 
 class DisLikePostView(View):
 
-    def post(self, request: HttpRequest, post_id: int) -> HttpResponse:
+    @staticmethod
+    def post(request: HttpRequest, post_id: int) -> HttpResponse:
         if request.user.is_authenticated:
-            dislike_post = get_object_or_404(Post, id=post_id)
-            user = request.user
-            if user in dislike_post.dislikes.all():
-                dislike_post.dislikes.remove(user)
-                return redirect('index')
-            else:
-                dislike_post.dislikes.add(user)
-                dislike_post.likes.remove(user)
+            add_dislike(request, post_id)
             return redirect('index')
         else:
             messages.success(request, ('You Must Be Loged In To View This Page!'))

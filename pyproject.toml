@@ -1,15 +1,19 @@
 [tool.flake8]
-exclude = ['venv']
+exclude = ["venv"]
 max-line-length = 120
-ignore = ["E203", "E266", "E501", "W503", "F403", "F401", "E999", "E501"]
+ignore = ["E203", "E266", "E501", "W503", "F403", "F401", "E999", "W605"]
 
 [tool.mypy]
-exclude = ['djangogramm_app/migrations/*']
+exclude = ["djangogramm_app/migrations/*"]
 warn_unused_configs = true
 ignore_missing_imports = true
 
 [tool.isort]
 profile = "black"
-line_length = 88
+line_length = 120
 multi_line_output = 3
 include_trailing_comma = true
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "DjangoGramm.settings"
+python_files = ["test_*.py"]

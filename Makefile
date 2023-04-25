@@ -26,7 +26,7 @@ superuser: migrate
 
 .PHONY: flake8
 flake8:
-	 docker-compose run web flake8
+	 docker-compose run web flake8 .
 
 .PHONY: isort
 isort:
@@ -35,3 +35,7 @@ isort:
 .PHONY: mypy
 mypy:
 	docker-compose run web mypy . --explicit-package-bases
+
+.PHONY: pytest
+pytest:
+	docker-compose run web pytest

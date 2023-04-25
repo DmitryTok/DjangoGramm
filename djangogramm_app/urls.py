@@ -1,12 +1,6 @@
 from django.urls import path
 
-from djangogramm_app.views import (
-    DeletePostView,
-    DisLikePostView,
-    LikePostView,
-    PostCreateView,
-    PostView,
-)
+from djangogramm_app.views import DeletePostView, DisLikePostView, LikePostView, PostCreateView, PostView
 
 urlpatterns = [
     path('', PostView.as_view(), name='index'),

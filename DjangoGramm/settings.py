@@ -4,7 +4,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "django-insecure-qzb1y40)_a5q9#lf*hf_$lcbp+srju)7%(ussgj8+vc06uhw2r"
+SECRET_KEY = env.get('SUPER_SECRET')
 
 DEBUG = True
 
@@ -29,6 +29,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+COVERAGE_MODULE_EXCLUDES = [
+    'tests$',
+    'settings$',
+    'urls$',
+    'locale$',
+    'migrations$',
+    'admin$',
 ]
 
 ROOT_URLCONF = 'DjangoGramm.urls'
@@ -59,7 +68,15 @@ DATABASES = {
         'PASSWORD': env.get('DB_PASSWORD'),
         'HOST': env.get('DB_HOST'),
         'PORT': env.get('DB_PORT'),
-    }
+    },
+    'test': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'test_djangogramm',
+        'USER': 'dmitry_tok',
+        'PASSWORD': 'postgres',
+        'HOST': 'db',
+        'PORT': '5432'
+    },
 }
 
 
@@ -84,13 +101,12 @@ LOGIN_REDIRECT_URL = '/'
 
 LOGOUT_REDIRECT_URL = '/'
 
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'moon0939110824@gmail.com'
-EMAIL_HOST_PASSWORD = 'rnvcoclnouubznkr'
+EMAIL_HOST_USER = env.get('GET_EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env.get('GET_EMAIL_HOST_PASSWORD')
 
 LANGUAGE_CODE = 'en-us'
 
@@ -101,7 +117,6 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
