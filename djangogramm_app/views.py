@@ -4,12 +4,7 @@ from django.shortcuts import redirect, render
 from django.views import View
 
 from djangogramm_app.forms import PictureFormPost, PostForm, TagForm
-from djangogramm_app.utils import add_dislike, add_like, tags
-
-from .repositories import PictureRepository, PostRepository
-
-POST_REPOSITORY = PostRepository()
-PICTURE_REPOSITORY = PictureRepository()
+from djangogramm_app.utils import PICTURE_REPOSITORY, POST_REPOSITORY, add_dislike, add_like, tags
 
 
 class PostView(View):
@@ -56,7 +51,7 @@ class PostCreateView(View):
                 images = request.FILES.getlist('picture')
                 imgs = []
                 for img in images:
-                    image = PICTURE_REPOSITORY.create(picture=img, use_get_or_create=False)
+                    image = PICTURE_REPOSITORY.create(use_get_or_create=False, picture=img)
                     image.save()
                     imgs.append(image)
                 post.tags.set(tags(tags_names))

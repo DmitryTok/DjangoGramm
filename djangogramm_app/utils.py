@@ -8,7 +8,7 @@ PICTURE_REPOSITORY = PictureRepository()
 def tags(all_tags):
     tags_lst = []
     for post_tag in all_tags:
-        tag, created = TAG_REPOSITORY.create(name=post_tag.strip(), use_get_or_create=True)
+        tag, created = TAG_REPOSITORY.create(use_get_or_create=True, name=post_tag.strip())
         tags_lst.append(tag)
     return tags_lst
 

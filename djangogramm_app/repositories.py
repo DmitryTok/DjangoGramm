@@ -5,7 +5,10 @@ from djangogramm_app.models import Pictures, Post, Tag
 
 
 class PostRepository:
-    model = Post
+
+    @property
+    def model(self):
+        return Post
 
     def get_all_posts(self):
         return self.model.objects.all().order_by('-pub_date')
@@ -20,11 +23,13 @@ class PostRepository:
 
 class PictureRepository(BaseRepository):
 
+    @property
     def model(self):
         return Pictures
 
 
 class TagRepository(BaseRepository):
 
+    @property
     def model(self):
         return Tag

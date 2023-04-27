@@ -1,5 +1,12 @@
 [tool.flake8]
-exclude = ["venv"]
+per-file-ignores = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    "venv",
+    ".venv"
+]
 max-line-length = 120
 ignore = ["E203", "E266", "E501", "W503", "F403", "F401", "E999", "W605"]
 
