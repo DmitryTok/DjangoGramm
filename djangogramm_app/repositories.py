@@ -1,14 +1,14 @@
 from django.shortcuts import get_object_or_404
 
 from base_repository.repository import BaseRepository
-from djangogramm_app.models import Pictures, Post, Tag
+from djangogramm_app import models
 
 
-class PostRepository:
+class PostRepository(BaseRepository):
 
     @property
     def model(self):
-        return Post
+        return models.Post
 
     def get_all_posts(self):
         return self.model.objects.all().order_by('-pub_date')
@@ -20,16 +20,23 @@ class PostRepository:
         delete_post = get_object_or_404(self.model, id=post_id)
         delete_post.delete()
 
+    def get_likes_or_dislikes(self, post_id: int, is_dislike=True):
+        get_post = get_object_or_404(self.model, id=post_id)
+        if is_dislike:
+            return get_post.dislikes
+        else:
+            return get_post.likes
+
 
 class PictureRepository(BaseRepository):
 
     @property
     def model(self):
-        return Pictures
+        return models.Pictures
 
 
 class TagRepository(BaseRepository):
 
     @property
     def model(self):
-        return Tag
+        return models.Tag

@@ -13,21 +13,19 @@ def tags(all_tags):
     return tags_lst
 
 
-def add_like(request, post_id):
-    like_post = POST_REPOSITORY.get_post_by_id(post_id)
+def add_like_or_dislike(request, post_id, is_liked=True):
+    like_post = POST_REPOSITORY.get_likes_or_dislikes(post_id, is_dislike=False)
+    dislike_post = POST_REPOSITORY.get_likes_or_dislikes(post_id, is_dislike=True)
     user = request.user
-    if user in like_post.likes.all():
-        like_post.likes.remove(user)
+    if is_liked:
+        if like_post.filter(id=user.id).exists():
+            like_post.remove(user)
+        else:
+            like_post.add(user)
+            dislike_post.remove(user)
     else:
-        like_post.likes.add(user)
-        like_post.dislikes.remove(user)
-
-
-def add_dislike(request, post_id):
-    dislike_post = POST_REPOSITORY.get_post_by_id(post_id)
-    user = request.user
-    if user in dislike_post.dislikes.all():
-        dislike_post.dislikes.remove(user)
-    else:
-        dislike_post.dislikes.add(user)
-        dislike_post.likes.remove(user)
+        if dislike_post.filter(id=user.id).exists():
+            dislike_post.remove(user)
+        else:
+            dislike_post.add(user)
+            like_post.remove(user)

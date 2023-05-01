@@ -12,9 +12,6 @@ from users.views import (
     UpdateProfile,
 )
 
-# import django.contrib.auth.urls
-
-
 urlpatterns = [
     path('login/', CustomLoginView.as_view(), name='login'),
     path('', include('django.contrib.auth.urls')),

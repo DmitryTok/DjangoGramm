@@ -1,10 +1,12 @@
+from typing import Union
+
 from django.contrib import messages
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.views import View
 
 from djangogramm_app.forms import PictureFormPost, PostForm, TagForm
-from djangogramm_app.utils import PICTURE_REPOSITORY, POST_REPOSITORY, add_dislike, add_like, tags
+from djangogramm_app.utils import PICTURE_REPOSITORY, POST_REPOSITORY, add_like_or_dislike, tags
 
 
 class PostView(View):
@@ -23,7 +25,7 @@ class PostView(View):
 class PostCreateView(View):
     template_name = 'posts/post_create.html'
 
-    def get(self, request: HttpRequest) -> HttpResponse:
+    def get(self, request: HttpRequest) -> Union[HttpResponse, HttpResponseRedirect]:
         if request.user.is_authenticated:
             picture_form = PictureFormPost()
             post_form = PostForm()
@@ -38,7 +40,7 @@ class PostCreateView(View):
             messages.success(request, ('You Must Be Loged In To Create New Post'))
             return redirect('login')
 
-    def post(self, request: HttpRequest) -> HttpResponse:
+    def post(self, request: HttpRequest) -> Union[HttpResponse, HttpResponseRedirect]:
         if request.user.is_authenticated:
             picture_form = PictureFormPost(request.POST, request.FILES)
             tag_form = TagForm(request.POST)
@@ -73,7 +75,7 @@ class PostCreateView(View):
 class DeletePostView(View):
     template_name = 'posts/post_delete.html'
 
-    def get(self, request: HttpRequest, post_id: int) -> HttpResponse:
+    def get(self, request: HttpRequest, post_id: int) -> Union[HttpResponse, HttpResponseRedirect]:
         post = POST_REPOSITORY.get_post_by_id(post_id)
         if request.user.is_authenticated and post.user == request.user:
             context = {
@@ -85,7 +87,7 @@ class DeletePostView(View):
             return redirect('index')
 
     @staticmethod
-    def post(request: HttpRequest, post_id: int) -> HttpResponse:
+    def post(request: HttpRequest, post_id: int) -> Union[HttpResponse, HttpResponseRedirect]:
         post = POST_REPOSITORY.get_post_by_id(post_id)
         if request.user.is_authenticated and post.user == request.user:
             POST_REPOSITORY.delete_post_by_id(post_id)
@@ -99,9 +101,9 @@ class DeletePostView(View):
 class LikePostView(View):
 
     @staticmethod
-    def post(request: HttpRequest, post_id: int) -> HttpResponse:
+    def post(request: HttpRequest, post_id: int) -> HttpResponseRedirect:
         if request.user.is_authenticated:
-            add_like(request, post_id)
+            add_like_or_dislike(request, post_id, is_liked=True)
             return redirect('index')
         else:
             messages.success(request, ('You Must Be Loged In To View This Page!'))
@@ -111,9 +113,9 @@ class LikePostView(View):
 class DisLikePostView(View):
 
     @staticmethod
-    def post(request: HttpRequest, post_id: int) -> HttpResponse:
+    def post(request: HttpRequest, post_id: int) -> HttpResponseRedirect:
         if request.user.is_authenticated:
-            add_dislike(request, post_id)
+            add_like_or_dislike(request, post_id, is_liked=False)
             return redirect('index')
         else:
             messages.success(request, ('You Must Be Loged In To View This Page!'))

@@ -6,7 +6,7 @@ from django.forms import EmailInput, Textarea, TextInput
 from django.utils.translation import gettext_lazy as _
 
 from djangogramm_app.models import Pictures
-from email_veryfi.send_email_for_veryfi import send_email_for_verify
+from email_verification.send_email_verification import send_email_verification
 from users.models import User
 
 
@@ -25,7 +25,7 @@ class CustomAuthenticationForm(AuthenticationForm):
                     code='invalid_login',
                 )
             elif not self.user_cache.is_email_verify:
-                send_email_for_verify(self.request, self.user_cache)
+                send_email_verification(self.request, self.user_cache)
                 raise ValidationError(
                     'Email is not verified, please check your email address',
                     code='invalid_login',

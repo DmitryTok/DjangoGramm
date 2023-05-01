@@ -69,14 +69,6 @@ DATABASES = {
         'HOST': env.get('DB_HOST'),
         'PORT': env.get('DB_PORT'),
     },
-    'test': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'test_djangogramm',
-        'USER': 'dmitry_tok',
-        'PASSWORD': 'postgres',
-        'HOST': 'db',
-        'PORT': '5432'
-    },
 }
 
 
@@ -122,3 +114,5 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+TEST_DATABASE_PREFIX = 'test_'
