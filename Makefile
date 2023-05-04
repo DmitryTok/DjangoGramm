@@ -36,6 +36,10 @@ isort:
 mypy:
 	docker-compose run web mypy . --explicit-package-bases
 
-.PHONY: pytest
-pytest:
-	docker-compose run web pytest
+.PHONY: tests
+tests:
+	docker-compose run web coverage run --source='.' manage.py test
+
+.PHONY: tests_report
+tests_report:
+	docker-compose run web coverage report

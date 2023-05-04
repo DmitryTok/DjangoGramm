@@ -69,6 +69,14 @@ DATABASES = {
         'HOST': env.get('DB_HOST'),
         'PORT': env.get('DB_PORT'),
     },
+    'test': {
+        'ENGINE': env.get('DB_ENGINE'),
+        'NAME': 'test_djangogramm',
+        'USER': env.get('DB_USER'),
+        'PASSWORD': env.get('DB_PASSWORD'),
+        'HOST': env.get('DB_HOST'),
+        'PORT': env.get('DB_PORT'),
+    }
 }
 
 

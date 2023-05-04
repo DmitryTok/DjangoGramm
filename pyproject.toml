@@ -1,5 +1,12 @@
 [tool.flake8]
-exclude = ["venv", "migrations", ".pre-commit-config.yaml", "pyproject.toml"]
+exclude = [
+    "venv",
+    "migrations",
+    ".pre-commit-config.yaml",
+    "pyproject.toml",
+    "Makefile",
+    "requirements.txt"
+]
 max-line-length = 120
 
 [tool.mypy]
@@ -12,7 +19,3 @@ profile = "black"
 line_length = 120
 multi_line_output = 3
 include_trailing_comma = true
-
-[tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "DjangoGramm.settings"
-python_files = ["test_*.py"]
