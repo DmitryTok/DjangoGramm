@@ -1,3 +1,4 @@
+from django.http import HttpRequest
 from django.test import TestCase
 
 from djangogramm_app.models import Pictures, Post, Tag
@@ -11,6 +12,8 @@ class RepositoryTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.test_uidb64 = "valid_uidb64"
+        cls.test_request = HttpRequest()
         cls.avatar = Pictures.objects.create(
             picture='test_image.jpg'
         )
@@ -33,6 +36,8 @@ class RepositoryTestCase(TestCase):
             avatar=cls.avatar,
             is_email_verify=True
         )
+        cls.test_request.user = cls.test_user_2
+        cls.test_uid = str(cls.test_user.id)
         cls.post = Post.objects.create(
             user=cls.test_user,
             text='Test post text',
@@ -87,7 +92,25 @@ class RepositoryTestCase(TestCase):
         self.assertEqual(list(users), list(all_users))
 
     def test_get_user_id(self):
-        pass
+        user = self.user_repository.get_user_id(self.test_user.id)
+        self.assertEqual(user.id, 3)
+
+    def test_request_user(self):
+        request_user = self.user_repository.get_request_user(self.test_request)
+        self.assertEqual(request_user.id, 4)
+
+    def test_delete_user(self):
+        self.user_repository.delete_user_by_id(self.test_user.id)
+        self.assertFalse(User.objects.filter(id=self.test_user.id).exists())
+
+    def test_exclude_user(self):
+        result = self.user_repository.exclude_user(self.test_request)
+        self.assertNotIn(self.test_user_2, result)
+        self.assertIn(self.test_user, result)
+
+    def test_get_uid_user(self):
+        result = self.user_repository.get_user(self.test_uidb64)
+        self.assertIsNone(result)
 
     def test_get_all_posts(self):
         posts = self.post_repository.get_all_posts()
