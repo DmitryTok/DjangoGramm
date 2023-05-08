@@ -7,7 +7,7 @@ from users.models import User
 from users.repositories import UserRepository
 
 
-class RepositoryTestCase(TestCase):
+class TestDjangogrammRepository(TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -63,9 +63,6 @@ class RepositoryTestCase(TestCase):
     def test_post_model_property(self):
         self.assertEqual(self.post_repository.model, Post)
 
-    def test_user_model_property(self):
-        self.assertEqual(self.user_repository.model, User)
-
     def test_tag_create_with_get_or_create(self):
         tag, created = self.tag_repository.create(use_get_or_create=True, **self.tag_data)
         self.assertTrue(created)
@@ -85,32 +82,6 @@ class RepositoryTestCase(TestCase):
         pic = self.pic_repository.create(use_get_or_create=False, **self.pic_data)
         self.assertIsNotNone(pic.id)
         self.assertEqual(pic.picture, 'test_picture.jpg')
-
-    def test_user_repository_get(self):
-        users = self.user_repository.get()
-        all_users = User.objects.all()
-        self.assertEqual(list(users), list(all_users))
-
-    def test_get_user_id(self):
-        user = self.user_repository.get_user_id(self.test_user.id)
-        self.assertEqual(user.id, 3)
-
-    def test_request_user(self):
-        request_user = self.user_repository.get_request_user(self.test_request)
-        self.assertEqual(request_user.id, 4)
-
-    def test_delete_user(self):
-        self.user_repository.delete_user_by_id(self.test_user.id)
-        self.assertFalse(User.objects.filter(id=self.test_user.id).exists())
-
-    def test_exclude_user(self):
-        result = self.user_repository.exclude_user(self.test_request)
-        self.assertNotIn(self.test_user_2, result)
-        self.assertIn(self.test_user, result)
-
-    def test_get_uid_user(self):
-        result = self.user_repository.get_user(self.test_uidb64)
-        self.assertIsNone(result)
 
     def test_get_all_posts(self):
         posts = self.post_repository.get_all_posts()

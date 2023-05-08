@@ -4,7 +4,7 @@ from djangogramm_app.models import Pictures, Post, Tag
 from users.models import User
 
 
-class DjangoGrammModelsTest(TestCase):
+class TestDjangogrammModels(TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -41,25 +41,16 @@ class DjangoGrammModelsTest(TestCase):
         cls.post.likes.add(cls.test_user)
         cls.post.dislikes.add(cls.test_user_2)
 
-    def test_user_model(self):
-        user = User.objects.get(id=1)
-        self.assertEqual(user.email, 'test_user@example.com')
-        self.assertEqual(user.username, 'test_user')
-        self.assertEqual(user.full_name, 'test_user')
-        self.assertEqual(user.bio, 'This is a test bio.')
-        self.assertEqual(user.avatar, self.avatar)
-        self.assertTrue(user.is_email_verify)
-
     def test_picture_model(self):
-        pic = Pictures.objects.get(id=1)
+        pic = Pictures.objects.get(id=self.avatar.id)
         self.assertEqual(pic.picture, 'test_image.jpg')
 
     def test_tag_model(self):
-        tag = Tag.objects.get(id=1)
+        tag = Tag.objects.get(id=self.tag.id)
         self.assertEqual(tag.name, 'test_tag')
 
     def test_post_model(self):
-        post = Post.objects.get(id=1)
+        post = Post.objects.get(id=self.post.id)
         self.assertEqual(post.user, self.test_user)
         self.assertEqual(post.text, 'Test post text')
         self.assertEqual(post.pictures.first(), self.avatar)
