@@ -13,7 +13,8 @@ class TestUsersViews(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.client = Client()
+        cls.guest_client = Client()
+        cls.authorized_client = Client()
         cls.home = reverse('index')
         cls.register_url = reverse('register')
         cls.login_url = reverse('login')
@@ -40,6 +41,7 @@ class TestUsersViews(TestCase):
             bio='This is a test bio.',
             is_email_verify=True
         )
+        cls.authorized_client.force_login(cls.test_user)
         cls.test_user.avatar = cls.avatar
         cls.test_user.save()
         cls.test_uidb64 = urlsafe_base64_encode(str(cls.test_user.pk).encode()).rstrip('=')
@@ -51,46 +53,45 @@ class TestUsersViews(TestCase):
         cls.profile_list_url = reverse('profile_list')
 
     def test_registration_GET(self):
-        response = self.client.get(self.register_url)
+        response = self.guest_client.get(self.register_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'registration/register.html')
 
     def test_registration_POST(self):
-        response = self.client.post(self.register_url, data=self.anonim_user)
+        response = self.guest_client.post(self.register_url, data=self.anonim_user)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'registration/register.html')
 
     def test_login_GET(self):
-        response = self.client.get(self.login_url)
+        response = self.guest_client.get(self.login_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_login_POST_logged_in_correctly(self):
-        response = self.client.post(self.login_url, self.test_user_login)
+        response = self.guest_client.post(self.login_url, self.test_user_login)
         self.assertEqual(response.status_code, 200)
 
     def test_login_POST_user_not_exist(self):
-        response = self.client.post(self.login_url, self.test_user_not_exists)
+        response = self.guest_client.post(self.login_url, self.test_user_not_exists)
         self.assertEqual(response.status_code, 200)
 
     def test_login_POST_wrong_password(self):
-        response = self.client.post(self.login_url, self.test_user_not_exists)
+        response = self.guest_client.post(self.login_url, self.test_user_not_exists)
         self.assertEqual(response.status_code, 200)
 
     def test_logout_GET(self):
-        response = self.client.get(self.logout_url)
+        response = self.guest_client.get(self.logout_url)
         self.assertEqual(response.status_code, 302)
 
     def test_email_verification_GET(self):
-        response = self.client.get(self.test_verify)
+        response = self.guest_client.get(self.test_verify)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.test_profile_settings)
         self.test_user.refresh_from_db()
         self.assertTrue(self.test_user.is_email_verify)
 
     def test_profile_settings_GET(self):
-        self.client.force_login(self.test_user)
-        response = self.client.get(self.test_profile_settings)
+        response = self.authorized_client.get(self.test_profile_settings)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'profiles/profile_settings.html')
 
@@ -100,25 +101,22 @@ class TestUsersViews(TestCase):
             'bio': 'This is a test bio.',
             'avatar': self.avatar
         }
-        self.client.force_login(self.test_user)
-        response = self.client.post(self.test_profile_settings, data=data)
+        response = self.authorized_client.post(self.test_profile_settings, data=data)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.profile_url)
 
     def test_profile_GET(self):
-        self.client.force_login(self.test_user)
-        response = self.client.get(self.profile_url)
+        response = self.authorized_client.get(self.profile_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'profiles/profile.html')
 
     def test_anonim_profile_GET(self):
-        response = self.client.get(self.profile_url)
+        response = self.guest_client.get(self.profile_url)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.login_url)
 
     def test_update_profile_GET(self):
-        self.client.force_login(self.test_user)
-        response = self.client.get(self.update_profile_url)
+        response = self.authorized_client.get(self.update_profile_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'profiles/update_profile.html')
 
@@ -128,25 +126,21 @@ class TestUsersViews(TestCase):
             'bio': 'Updated bio.',
             'avatar': 'updated_pic.jpg'
         }
-        self.client.force_login(self.test_user)
-        response = self.client.post(self.update_profile_url, data=data)
+        response = self.authorized_client.post(self.update_profile_url, data=data)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.home)
 
     def test_delete_profile_GET(self):
-        self.client.force_login(self.test_user)
-        response = self.client.get(self.delete_profile_url)
+        response = self.authorized_client.get(self.delete_profile_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'profiles/delete_profile.html')
 
     def test_delete_profile_POST(self):
-        self.client.force_login(self.test_user)
-        response = self.client.post(self.delete_profile_url)
+        response = self.authorized_client.post(self.delete_profile_url)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.home)
 
     def test_all_profiles_GET(self):
-        self.client.force_login(self.test_user)
-        response = self.client.get(self.profile_list_url)
+        response = self.authorized_client.get(self.profile_list_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'profiles/profile_list.html')

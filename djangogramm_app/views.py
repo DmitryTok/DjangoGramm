@@ -61,9 +61,13 @@ class PostCreateView(View):
                 post_form.save_m2m()
                 return redirect('index')
         else:
-            post_form = PostForm(request.POST, request.FILES, instance=request.user.id)
-            tag_form = TagForm(request.POST)
-            picture_form = PictureFormPost(request.POST, request.FILES)
+            if request.user.is_authenticated:
+                post_form = PostForm(request.POST, request.FILES, instance=request.user.id)
+                tag_form = TagForm(request.POST)
+                picture_form = PictureFormPost(request.POST, request.FILES)
+            else:
+                messages.success(request, ('You Must Be Loged In To Create New Post'))
+                return redirect('login')
         context = {
             'post_form': post_form,
             'tag_form': tag_form,

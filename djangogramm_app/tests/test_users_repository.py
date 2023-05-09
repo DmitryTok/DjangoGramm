@@ -50,11 +50,11 @@ class TestUsersRepository(TestCase):
 
     def test_get_user_id(self):
         user = self.user_repository.get_user_id(self.test_user.id)
-        self.assertEqual(user.id, 8)
+        self.assertEqual(user.id, self.test_user.id)
 
     def test_request_user(self):
         request_user = self.user_repository.get_request_user(self.test_request)
-        self.assertEqual(request_user.id, 9)
+        self.assertEqual(request_user.id, self.test_user_2.id)
 
     def test_delete_user(self):
         self.user_repository.delete_user_by_id(self.test_user.id)
