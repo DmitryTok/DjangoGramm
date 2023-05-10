@@ -62,11 +62,15 @@ class ProfileSettings(View):
     template_name = 'profiles/profile_settings.html'
 
     def get(self, request: HttpRequest) -> HttpResponse:
-        context = {
-            'profile_form': ProfileForm(instance=request.user),
-            'profile_avatar_form': PictureFormAvatar(instance=request.user.avatar)
-        }
-        return render(request, self.template_name, context)
+        if request.user.is_authenticated:
+            context = {
+                'profile_form': ProfileForm(instance=request.user),
+                'profile_avatar_form': PictureFormAvatar(instance=request.user.avatar)
+            }
+            return render(request, self.template_name, context)
+        else:
+            messages.success(request, ('You Must Be Loged In To View This Page'))
+            return redirect('login')
 
     def post(self, request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponse]:
         profile_form = ProfileForm(request.POST, instance=request.user)

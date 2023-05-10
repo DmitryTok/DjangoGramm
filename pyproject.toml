@@ -5,7 +5,8 @@ exclude = [
     ".pre-commit-config.yaml",
     "pyproject.toml",
     "Makefile",
-    "requirements.txt"
+    "requirements.txt",
+    "Dockerfile"
 ]
 max-line-length = 120
 

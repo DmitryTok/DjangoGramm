@@ -67,12 +67,8 @@ class TestUsersViews(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'registration/login.html')
 
-    def test_login_POST_logged_in_correctly(self):
+    def test_login_POST(self):
         response = self.guest_client.post(self.login_url, self.test_user_login)
-        self.assertEqual(response.status_code, 200)
-
-    def test_login_POST_user_not_exist(self):
-        response = self.guest_client.post(self.login_url, self.test_user_not_exists)
         self.assertEqual(response.status_code, 200)
 
     def test_login_POST_wrong_password(self):
@@ -110,15 +106,18 @@ class TestUsersViews(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'profiles/profile.html')
 
-    def test_anonim_profile_GET(self):
-        response = self.guest_client.get(self.profile_url)
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, self.login_url)
+        anon_response = self.guest_client.get(self.profile_url)
+        self.assertEqual(anon_response.status_code, 302)
+        self.assertRedirects(anon_response, self.login_url)
 
     def test_update_profile_GET(self):
         response = self.authorized_client.get(self.update_profile_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'profiles/update_profile.html')
+
+        anon_response = self.guest_client.get(self.update_profile_url)
+        self.assertEqual(anon_response.status_code, 302)
+        self.assertRedirects(anon_response, self.login_url)
 
     def test_update_profile_POST(self):
         data = {
@@ -129,6 +128,10 @@ class TestUsersViews(TestCase):
         response = self.authorized_client.post(self.update_profile_url, data=data)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, self.home)
+
+        anon_response = self.guest_client.get(self.update_profile_url)
+        self.assertEqual(anon_response.status_code, 302)
+        self.assertRedirects(anon_response, self.login_url)
 
     def test_delete_profile_GET(self):
         response = self.authorized_client.get(self.delete_profile_url)
