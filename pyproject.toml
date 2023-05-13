@@ -6,7 +6,8 @@ exclude = [
     "pyproject.toml",
     "Makefile",
     "requirements.txt",
-    "Dockerfile"
+    "Dockerfile",
+    "docker-compose.yml"
 ]
 max-line-length = 120
 
