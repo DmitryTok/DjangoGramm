@@ -1,7 +1,7 @@
 from base_test_case.base_case import BaseTestCase
 
 
-class TestPostView(BaseTestCase):
+class TestPostViews(BaseTestCase):
 
     def test_post_GET(self):
         response = self.authorized_client.get(self.index)
