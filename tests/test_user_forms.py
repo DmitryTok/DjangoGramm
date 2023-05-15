@@ -1,12 +1,41 @@
 from django.contrib.auth import get_user_model
 
-from base_test_case.base_user_form_case import BaseUserFormsCase
+from tests.base_test_case.base_case import BaseTestCase
 from users.forms import CustomAuthenticationForm, PictureFormAvatar, ProfileForm, UserRegisterForm, UserUpdateForm
 
 User = get_user_model()
 
 
-class TestUserForms(BaseUserFormsCase):
+class TestUserForms(BaseTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.anon_user = {
+            'username': 'testuser',
+            'password1': 'testpassword',
+            'password2': 'testpassword',
+        }
+        cls.register_user = {
+            'email': 'test_email@gmail.com',
+            'username': 'tet_username',
+            'password1': 'testpassword',
+            'password2': 'testpassword'
+        }
+        cls.profile_settings = {
+            'full_name': 'full_name',
+            'bio': 'bio',
+            'avatar': 'avatar.jpg'
+        }
+        cls.profile_settings_not_full = {
+            'bio': 'bio',
+        }
+        cls.picture_data = {
+            'picture': 'pic.jpg'
+        }
+        cls.user_update_data = {
+            'username': 'new_username'
+        }
 
     def test_auth_form_not_valid(self):
         form = CustomAuthenticationForm(data=self.anon_user)

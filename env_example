@@ -1,7 +1,0 @@
-DB_ENGINE=<...> # specify that we work with postgresql data base
-DB_NAME=<...> # data base name
-DB_USER=<...> # login for connecting to data base
-DB_PASSWORD=<...> # password for connection to data base (create your own)
-DB_HOST=<...> # name of the service (container)
-DB_PORT=<...> # port for connection to data base
-SECRET_KEY=<...> # set up SECRET_KEY for django project

@@ -1,8 +1,31 @@
-from base_test_case.base_case import BaseTestCase
 from djangogramm_app import models
+from djangogramm_app.models import Post
+from djangogramm_app.repositories import PostRepository
+from tests.base_test_case.base_case import BaseTestCase
 
 
 class TestPostRepositories(BaseTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.post_repository = PostRepository()
+        cls.create_post = {
+            'user': cls.test_user,
+            'text': 'Test post text',
+            'pub_date': '2023-05-04 12:00:00',
+            'pictures': cls.avatar,
+            'tags': cls.tag
+        }
+        cls.post = Post.objects.create(
+            user=cls.test_user,
+            text='Test post text',
+            pub_date='2023-05-04 12:00:00'
+        )
+        cls.post.pictures.add(cls.avatar)
+        cls.post.tags.add(cls.tag)
+        cls.post.likes.add(cls.test_user)
+        cls.post.dislikes.add(cls.test_user_2)
 
     def test_post_model_property(self):
         self.assertEqual(self.post_repository.model, models.Post)

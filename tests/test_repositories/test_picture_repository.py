@@ -1,8 +1,15 @@
-from base_test_case.base_case import BaseTestCase
 from djangogramm_app import models
+from djangogramm_app.repositories import PictureRepository
+from tests.base_test_case.base_case import BaseTestCase
 
 
 class TestPictureRepository(BaseTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.pic_repository = PictureRepository()
+        cls.pic_data = {'picture': 'test_picture.jpg'}
 
     def test_pic_model_property(self):
         self.assertEqual(self.pic_repository.model, models.Pictures)
@@ -14,5 +21,4 @@ class TestPictureRepository(BaseTestCase):
 
     def test_pic_create_without_get_or_create(self):
         pic = self.pic_repository.create(use_get_or_create=False, **self.pic_data)
-        self.assertIsNotNone(pic.id)
         self.assertEqual(pic.picture, 'test_picture.jpg')

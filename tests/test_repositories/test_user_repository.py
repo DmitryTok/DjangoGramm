@@ -1,8 +1,21 @@
-from base_test_case.base_case import BaseTestCase
+from django.http import HttpRequest
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+
+from tests.base_test_case.base_case import BaseTestCase
 from users import models
+from users.repositories import UserRepository
 
 
 class TestUsersRepository(BaseTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.user_repository = UserRepository()
+        cls.test_uidb64 = urlsafe_base64_encode(force_bytes(cls.test_user.pk))
+        cls.test_request = HttpRequest()
+        cls.test_request.user = cls.test_user_2
+        cls.test_uid = str(cls.test_user.id)
 
     def test_user_model_property(self):
         self.assertEqual(self.user_repository.model, models.User)

@@ -1,8 +1,28 @@
-from base_test_case.base_djangogramm_form_case import BaseDjangogrammFormsCase
+from django.test import TestCase
+
 from djangogramm_app.forms import PictureFormPost, PostForm, TagForm
 
 
-class TestDjangogrammForms(BaseDjangogrammFormsCase):
+class TestDjangogrammForms(TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.post_text = {
+            'text': 'test post text'
+        }
+        cls.post_tag = {
+            'tags': 'test tag'
+        }
+        cls.post_pic = {
+            'picture': 'test_pic.jpg'
+        }
+
+    def setUp(self):
+        super().setUp()
+
+    def tearDown(self):
+        super().tearDown()
 
     def test_post_form_valid(self):
         form = PostForm(data=self.post_text)

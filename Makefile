@@ -38,7 +38,7 @@ mypy:
 
 .PHONY: tests
 tests:
-	docker-compose run web coverage run --source='.' manage.py test
+	docker-compose run web coverage run manage.py test
 
 .PHONY: tests_report
 tests_report:

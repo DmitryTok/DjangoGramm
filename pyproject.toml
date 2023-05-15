@@ -7,7 +7,9 @@ exclude = [
     "Makefile",
     "requirements.txt",
     "Dockerfile",
-    "docker-compose.yml"
+    "docker-compose.yml",
+    ".gitignore",
+    "example_env_file"
 ]
 max-line-length = 120
 
