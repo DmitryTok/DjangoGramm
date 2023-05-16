@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.db.utils import IntegrityError
 from django.test import Client, TestCase
 from django.urls import reverse
 
@@ -22,7 +21,7 @@ class BaseTestCase(TestCase):
         cls.tag = Tag.objects.create(
             name='test_tag'
         )
-        try:
+        if not User.objects.filter(email='test_user@example.com').exists():
             cls.test_user = User.objects.create_user(
                 email='test_user@example.com',
                 username='test_user',
@@ -31,28 +30,15 @@ class BaseTestCase(TestCase):
                 avatar=cls.avatar,
                 is_email_verify=True
             )
-        except IntegrityError:
-            # Existing test_user found, delete it
-            existing_user = User.objects.get(email='test_user@example.com')
-            existing_user.avatar = None  # Remove the avatar reference
-            existing_user.save()
-            existing_user.delete()
-            cls.test_user = User.objects.create_user(
-                email='test_user@example.com',
-                username='test_user',
-                full_name='test_user',
+        if not User.objects.filter(email='test_user_2@example.com').exists():
+            cls.test_user_2 = User.objects.create_user(
+                email='test_user_2@example.com',
+                username='test_user_2',
+                full_name='test_user_2',
                 bio='This is a test bio.',
                 avatar=cls.avatar,
                 is_email_verify=True
             )
-        cls.test_user_2 = User.objects.create_user(
-            email='test_user_2@example.com',
-            username='test_user_2',
-            full_name='test_user_2',
-            bio='This is a test bio.',
-            avatar=cls.avatar,
-            is_email_verify=True
-        )
         cls.test_user.avatar = cls.avatar
         cls.test_user.save()
 
@@ -77,8 +63,18 @@ class BaseTestCase(TestCase):
         cls.post_like = 'post_like'
         cls.post_dislike = 'post_dislike'
 
+    @classmethod
+    def tearDownClass(cls):
+        Pictures.objects.all().delete()
+        Tag.objects.all().delete()
+        User.objects.all().delete()
+        super().tearDownClass()
+
     def setUp(self):
         super().setUp()
 
     def tearDown(self):
+        Pictures.objects.all().delete()
+        Tag.objects.all().delete()
+        User.objects.all().delete()
         super().tearDown()

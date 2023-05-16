@@ -1,10 +1,11 @@
 import os
+import sys
 from os import environ as env
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = env.get('SUPER_SECRET')
+SECRET_KEY = env.get('SECRET_KEY')
 
 DEBUG = True
 
@@ -71,13 +72,16 @@ DATABASES = {
     },
     'test': {
         'ENGINE': env.get('DB_ENGINE'),
-        'NAME': 'test_djangogramm',
+        'NAME': env.get('TEST_DB_NAME'),
         'USER': env.get('DB_USER'),
         'PASSWORD': env.get('DB_PASSWORD'),
-        'HOST': env.get('DB_HOST'),
-        'PORT': env.get('DB_PORT'),
+        'HOST': env.get('TEST_DB_HOST'),
+        'PORT': env.get('TEST_DB_PORT'),
     }
 }
+
+if 'test' in sys.argv:
+    DATABASES['default'] = DATABASES['test']
 
 
 AUTH_PASSWORD_VALIDATORS = [

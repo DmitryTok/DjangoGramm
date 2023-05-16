@@ -1,6 +1,18 @@
 version: '3.9'
 
 services:
+  test_db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: dmitry_tok
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: test_djangogramm
+    volumes:
+      - test_db_data:/var/lib/postgresql/data/
+    ports:
+      - "5433:5433"
+    networks:
+      - mynetwork
   db:
     image: postgres:13
     environment:
@@ -24,6 +36,7 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - test_db
     networks:
       mynetwork:
         aliases:
@@ -31,6 +44,7 @@ services:
 
 volumes:
   db_data:
+  test_db_data:
 
 networks:
   mynetwork:
