@@ -1,0 +1,17 @@
+[run]
+omit =
+  email_verification/*,
+  */admin.py,
+  */apps.py,
+  */models.py,
+  */utils.py,
+  */migrations/*,
+  */settings*,
+  */tests/*,
+  */urls.py,
+  */wsgi/*,
+  */wsgi.py,
+  */asgi.py,
+  */__init__.py,
+  */__init__.py,
+  manage.py

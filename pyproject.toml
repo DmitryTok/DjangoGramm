@@ -9,7 +9,9 @@ exclude = [
     "Dockerfile",
     "docker-compose.yml",
     ".gitignore",
-    "example_env_file"
+    "example_env_file",
+    ".coveragerc",
+    "README.md"
 ]
 max-line-length = 120
 

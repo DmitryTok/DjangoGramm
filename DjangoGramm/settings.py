@@ -5,11 +5,11 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = env.get('SECRET_KEY')
+SECRET_KEY = env.get('SECRET_KEY', default='django-insecure-qzb1y40)_a5q9#lf*hf_$lcbp+srju)7%(ussgj8+vc06uhw2r')
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -63,20 +63,20 @@ WSGI_APPLICATION = 'DjangoGramm.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': env.get('DB_ENGINE'),
-        'NAME': env.get('DB_NAME'),
-        'USER': env.get('DB_USER'),
-        'PASSWORD': env.get('DB_PASSWORD'),
-        'HOST': env.get('DB_HOST'),
-        'PORT': env.get('DB_PORT'),
+        'ENGINE': env.get('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': env.get('DB_NAME', default='djangogramm'),
+        'USER': env.get('DB_USER', default='dmitry_tok'),
+        'PASSWORD': env.get('DB_PASSWORD', default='postgres'),
+        'HOST': env.get('DB_HOST', default='db'),
+        'PORT': env.get('DB_PORT', default='5432'),
     },
     'test': {
-        'ENGINE': env.get('DB_ENGINE'),
-        'NAME': env.get('TEST_DB_NAME'),
-        'USER': env.get('DB_USER'),
-        'PASSWORD': env.get('DB_PASSWORD'),
-        'HOST': env.get('TEST_DB_HOST'),
-        'PORT': env.get('TEST_DB_PORT'),
+        'ENGINE': env.get('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': env.get('TEST_DB_NAME', default='test_djangogramm'),
+        'USER': env.get('DB_USER', default='dmitry_tok'),
+        'PASSWORD': env.get('DB_PASSWORD', default='postgres'),
+        'HOST': env.get('TEST_DB_HOST', default='test_db'),
+        'PORT': env.get('TEST_DB_PORT', default='5432'),
     }
 }
 

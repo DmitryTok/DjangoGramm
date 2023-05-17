@@ -6,14 +6,16 @@ from django.shortcuts import redirect, render
 from django.views import View
 
 from djangogramm_app.forms import PictureFormPost, PostForm, TagForm
-from djangogramm_app.utils import PICTURE_REPOSITORY, POST_REPOSITORY, add_like_or_dislike, tags
+from djangogramm_app.repositories import PictureRepository, PostRepository
+from djangogramm_app.utils import add_like_or_dislike, tags
 
 
 class PostView(View):
     template_name = 'index.html'
 
     def get(self, request: HttpRequest) -> HttpResponse:
-        posts = POST_REPOSITORY.get_all_posts()
+        post_repository = PostRepository()
+        posts = post_repository.get_all_posts()
         user = request.user
         context = {
             'user': user,
@@ -41,6 +43,7 @@ class PostCreateView(View):
             return redirect('login')
 
     def post(self, request: HttpRequest) -> Union[HttpResponse, HttpResponseRedirect]:
+        picture_repository = PictureRepository()
         if request.user.is_authenticated:
             picture_form = PictureFormPost(request.POST, request.FILES)
             tag_form = TagForm(request.POST)
@@ -53,7 +56,7 @@ class PostCreateView(View):
                 images = request.FILES.getlist('picture')
                 imgs = []
                 for img in images:
-                    image = PICTURE_REPOSITORY.create(use_get_or_create=False, picture=img)
+                    image = picture_repository.create(use_get_or_create=False, picture=img)
                     image.save()
                     imgs.append(image)
                 post.tags.set(tags(tags_names))
@@ -61,13 +64,8 @@ class PostCreateView(View):
                 post_form.save_m2m()
                 return redirect('index')
         else:
-            if request.user.is_authenticated:
-                post_form = PostForm(request.POST, request.FILES, instance=request.user.id)
-                tag_form = TagForm(request.POST)
-                picture_form = PictureFormPost(request.POST, request.FILES)
-            else:
-                messages.success(request, ('You Must Be Loged In To Create New Post'))
-                return redirect('login')
+            messages.success(request, ('You Must Be Loged In To Create New Post'))
+            return redirect('login')
         context = {
             'post_form': post_form,
             'tag_form': tag_form,
@@ -80,7 +78,8 @@ class DeletePostView(View):
     template_name = 'posts/post_delete.html'
 
     def get(self, request: HttpRequest, post_id: int) -> Union[HttpResponse, HttpResponseRedirect]:
-        post = POST_REPOSITORY.get_post_by_id(post_id)
+        post_repository = PostRepository()
+        post = post_repository.get_post_by_id(post_id)
         if request.user.is_authenticated and post.user == request.user:
             context = {
                 'post': post
@@ -92,9 +91,10 @@ class DeletePostView(View):
 
     @staticmethod
     def post(request: HttpRequest, post_id: int) -> Union[HttpResponse, HttpResponseRedirect]:
-        post = POST_REPOSITORY.get_post_by_id(post_id)
+        post_repository = PostRepository()
+        post = post_repository.get_post_by_id(post_id)
         if request.user.is_authenticated and post.user == request.user:
-            POST_REPOSITORY.delete_post_by_id(post_id)
+            post_repository.delete_post_by_id(post_id)
             messages.success(request, ('Your Post Has Been Deleted!'))
         else:
             messages.success(request, ('You Must Be Loged In To View This Page!'))
