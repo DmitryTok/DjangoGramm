@@ -5,7 +5,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.http import urlsafe_base64_decode
 
-from base_repository.repository import BaseRepository
+from DjangoGramm.Base.base_repository import BaseRepository
 from users import models
 
 

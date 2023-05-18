@@ -1,6 +1,6 @@
 [run]
 omit =
-  email_verification/*,
+  */send_email_verification.py,
   */admin.py,
   */apps.py,
   */models.py,

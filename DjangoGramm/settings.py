@@ -5,7 +5,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = env.get('SECRET_KEY', default='django-insecure-qzb1y40)_a5q9#lf*hf_$lcbp+srju)7%(ussgj8+vc06uhw2r')
+SECRET_KEY = env.get('SUPER_SECRET', default='django-insecure-qzb1y40)_a5q9#lf*hf_$lcbp+srju)7%(ussgj8+vc06uhw2r')
 
 DEBUG = True
 
@@ -46,8 +46,11 @@ ROOT_URLCONF = 'DjangoGramm.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'APP_DIRS': [
+            'users',
+            'djangogramm_app'
+        ],
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',

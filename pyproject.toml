@@ -11,8 +11,11 @@ exclude = [
     ".gitignore",
     "example_env_file",
     ".coveragerc",
-    "README.md"
+    "users/templates",
+    "djangogramm_app/templates",
+    "multiprocessing"
 ]
+ignore = ["E999"]
 max-line-length = 120
 
 [tool.mypy]

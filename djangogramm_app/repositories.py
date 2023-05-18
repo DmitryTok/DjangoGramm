@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 
-from base_repository.repository import BaseRepository
+from DjangoGramm.Base.base_repository import BaseRepository
 from djangogramm_app import models
 
 

@@ -9,11 +9,9 @@ from django.shortcuts import redirect, render
 from django.views import View
 
 from djangogramm_app.models import Pictures, Post
-from email_verification.send_email_verification import send_email_verification
+from users.email_verification.send_email_verification import send_email_verification
 from users.forms import CustomAuthenticationForm, PictureFormAvatar, ProfileForm, UserRegisterForm, UserUpdateForm
 from users.repositories import UserRepository
-
-USER_REPOSITORY = UserRepository()
 
 
 class CustomLoginView(LoginView):
@@ -24,7 +22,8 @@ class EmailVerify(View):
 
     @staticmethod
     def get(request: HttpRequest, uidb64: str, token: str) -> Union[HttpResponseRedirect, HttpResponse]:
-        user = USER_REPOSITORY.get_user(uidb64)
+        user_repository = UserRepository()
+        user = user_repository.get_user(uidb64)
         if user is not None and token_generator.check_token(user, token):
             user.is_email_verify = True
             user.save()
@@ -107,8 +106,9 @@ class Profile(View):
     template_name = 'profiles/profile.html'
 
     def get(self, request: HttpRequest, user_id: int) -> Union[HttpResponseRedirect, HttpResponse]:
+        user_repository = UserRepository()
         if request.user.is_authenticated:
-            user = USER_REPOSITORY.get_user_id(user_id)
+            user = user_repository.get_user_id(user_id)
             posts = Post.objects.filter(user__id=user_id).order_by('pub_date')
             post_count = Post.objects.filter(user__id=user_id).count()
             context = {
@@ -126,8 +126,9 @@ class UpdateProfile(View):
     template_name = 'profiles/update_profile.html'
 
     def get(self, request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponse]:
+        user_repository = UserRepository()
         if request.user.is_authenticated:
-            current_user = USER_REPOSITORY.get_request_user(request)
+            current_user = user_repository.get_request_user(request)
             context = {
                 'extra_fields_form': ProfileForm(instance=current_user),
                 'common_form': UserUpdateForm(instance=current_user),
@@ -139,8 +140,9 @@ class UpdateProfile(View):
             return redirect('login')
 
     def post(self, request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponse]:
+        user_repository = UserRepository()
         if request.user.is_authenticated:
-            current_user = USER_REPOSITORY.get_request_user(request)
+            current_user = user_repository.get_request_user(request)
             common_form = UserUpdateForm(request.POST or None, request.FILES or None, instance=current_user)
             extra_fields_form = ProfileForm(
                 request.POST or None,
@@ -179,7 +181,8 @@ class DeleteProfile(View):
     template_name = 'profiles/delete_profile.html'
 
     def get(self, request: HttpRequest, user_id: int) -> Union[HttpResponseRedirect, HttpResponse]:
-        user = USER_REPOSITORY.get_user_id(user_id)
+        user_repository = UserRepository()
+        user = user_repository.get_user_id(user_id)
         if request.user.is_authenticated and user == request.user:
             context = {
                 'user': user
@@ -191,9 +194,10 @@ class DeleteProfile(View):
 
     @staticmethod
     def post(request: HttpRequest, user_id: int) -> Union[HttpResponseRedirect, HttpResponse]:
-        user = USER_REPOSITORY.get_user_id(user_id)
+        user_repository = UserRepository()
+        user = user_repository.get_user_id(user_id)
         if request.user.is_authenticated and user == request.user:
-            USER_REPOSITORY.delete_user_by_id(user_id)
+            user_repository.delete_user_by_id(user_id)
             messages.success(request, ('Your Profile Has Been Deleted!'))
         else:
             messages.success(request, ('You Must Be Loged In To View This Page!'))
@@ -205,8 +209,9 @@ class ProfileList(View):
     template_name = 'profiles/profile_list.html'
 
     def get(self, request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponse]:
+        user_repository = UserRepository()
         if request.user.is_authenticated:
-            all_users = USER_REPOSITORY.exclude_user(request)
+            all_users = user_repository.exclude_user(request)
             context = {
                 'all_users': all_users,
             }
