@@ -5,7 +5,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.http import urlsafe_base64_decode
 
-from DjangoGramm.Base.base_repository import BaseRepository
+from DjangoGramm.base.base_repository import BaseRepository
 from users import models
 
 
@@ -40,3 +40,16 @@ class UserRepository(BaseRepository):
                 models.User.DoesNotExist, ValidationError):
             user = None
         return user
+
+
+class FollowRepository(BaseRepository):
+
+    @property
+    def model(self) -> Type[models.Follow]:
+        return models.Follow
+
+    def get_user_follow(self, user, user_id):
+        return self.model.objects.filter(user=user, author=user_id).exists()
+
+    def get_unfollow_user(self, user, user_id):
+        return self.model.objects.filter(user=user, author=user_id).delete()

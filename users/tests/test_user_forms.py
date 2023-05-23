@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 
-from DjangoGramm.Base.base_test_case.base_case import BaseTestCase
+from tests.base_test_case.base_case import BaseTestCase
 from users.forms import CustomAuthenticationForm, PictureFormAvatar, ProfileForm, UserRegisterForm, UserUpdateForm
 
 User = get_user_model()

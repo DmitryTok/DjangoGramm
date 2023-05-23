@@ -46,7 +46,7 @@ ROOT_URLCONF = 'DjangoGramm.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'DjangoGramm/templates')],
         'APP_DIRS': [
             'users',
             'djangogramm_app'
@@ -126,7 +126,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'DjangoGramm/media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

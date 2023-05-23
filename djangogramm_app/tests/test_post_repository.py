@@ -1,7 +1,7 @@
-from DjangoGramm.Base.base_test_case.base_case import BaseTestCase
 from djangogramm_app import models
 from djangogramm_app.models import Post
 from djangogramm_app.repositories import PostRepository
+from tests.base_test_case.base_case import BaseTestCase
 
 
 class TestPostRepositories(BaseTestCase):

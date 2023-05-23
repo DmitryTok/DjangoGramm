@@ -5,10 +5,12 @@ from users.views import (
     CustomLoginView,
     DeleteProfile,
     EmailVerify,
+    FollowUser,
     Profile,
     ProfileList,
     ProfileSettings,
     Register,
+    UnfollowUser,
     UpdateProfile,
 )
 
@@ -36,4 +38,6 @@ urlpatterns = [
         TemplateView.as_view(template_name='registration/confirm_email.html'),
         name='confirm_email'
     ),
+    path('profile_follow/<user_id>', FollowUser.as_view(), name='profile_follow'),
+    path('profile_unfollow/<user_id>', UnfollowUser.as_view(), name='profile_unfollow'),
 ]

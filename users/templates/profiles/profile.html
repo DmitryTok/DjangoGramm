@@ -4,6 +4,26 @@
     <div class="row">
         <h1>Profile</h1>
         <br>
+        <div class="col-md-2">
+            {% if request.user.id != user.id %}
+                {% if following %}
+                    <form method="post" action="{% url 'profile_unfollow' user.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger">
+                            Unfollow {{ user.username }}
+                        </button>
+                    </form>
+                {% else %}
+                    <form method="post" action="{% url 'profile_follow' user.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-success">
+                            Follow {{ user.username }}
+                        </button>
+                    </form>
+                {% endif %}
+            {% endif %}
+        </div>
+        <p>
         <form method="post">
             {% csrf_token %}
             {% if request.user.id == user.id %}

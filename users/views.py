@@ -8,10 +8,11 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.views import View
 
-from djangogramm_app.models import Pictures, Post
+from djangogramm_app.models import Pictures
+from djangogramm_app.repositories import PostRepository
 from users.email_verification.send_email_verification import send_email_verification
 from users.forms import CustomAuthenticationForm, PictureFormAvatar, ProfileForm, UserRegisterForm, UserUpdateForm
-from users.repositories import UserRepository
+from users.repositories import FollowRepository, UserRepository
 
 
 class CustomLoginView(LoginView):
@@ -106,15 +107,19 @@ class Profile(View):
     template_name = 'profiles/profile.html'
 
     def get(self, request: HttpRequest, user_id: int) -> Union[HttpResponseRedirect, HttpResponse]:
+        follow_repository = FollowRepository()
+        post_repository = PostRepository()
         user_repository = UserRepository()
         if request.user.is_authenticated:
+            following = follow_repository.get_user_follow(request.user, user_id)
             user = user_repository.get_user_id(user_id)
-            posts = Post.objects.filter(user__id=user_id).order_by('pub_date')
-            post_count = Post.objects.filter(user__id=user_id).count()
+            posts = post_repository.get_all_sorted_users_posts(user_id)
+            post_count = post_repository.count_all_users_posts(user_id)
             context = {
                 'user': user,
                 'posts': posts,
-                'post_count': post_count
+                'post_count': post_count,
+                'following': following
             }
             return render(request, self.template_name, context)
         else:
@@ -216,6 +221,42 @@ class ProfileList(View):
                 'all_users': all_users,
             }
             return render(request, self.template_name, context)
+        else:
+            messages.success(request, ('You Must Be Loged In To View This Page'))
+            return redirect('login')
+
+
+class FollowUser(View):
+
+    @staticmethod
+    def post(request: HttpRequest, user_id: int) -> Union[HttpResponseRedirect, HttpResponse]:
+        follow_repository = FollowRepository()
+        user_repository = UserRepository()
+        author = user_repository.get_user_id(user_id)
+        if request.user.id == author.id:
+            messages.success(request, ('You Can Not Follow Yourself'))
+            return redirect('profile', request.user.id)
+        elif request.user != author:
+            follow_repository.create(user=request.user, author=author)
+            return redirect('profile', author.id)
+        else:
+            messages.success(request, ('You Must Be Loged In To View This Page'))
+            return redirect('login')
+
+
+class UnfollowUser(View):
+
+    @staticmethod
+    def post(request: HttpRequest, user_id: int) -> Union[HttpResponseRedirect, HttpResponse]:
+        follow_repository = FollowRepository()
+        user_repository = UserRepository()
+        author = user_repository.get_user_id(user_id)
+        if request.user == author:
+            messages.success(request, ('You Can Not Unfollow Yourself'))
+            return redirect('profile', author.id)
+        elif request.user != author:
+            follow_repository.get_unfollow_user(request.user, user_id)
+            return redirect('profile', author.id)
         else:
             messages.success(request, ('You Must Be Loged In To View This Page'))
             return redirect('login')

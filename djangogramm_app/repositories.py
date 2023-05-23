@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 
-from DjangoGramm.Base.base_repository import BaseRepository
+from DjangoGramm.base.base_repository import BaseRepository
 from djangogramm_app import models
 
 
@@ -12,6 +12,12 @@ class PostRepository(BaseRepository):
 
     def get_all_posts(self):
         return self.model.objects.all().order_by('-pub_date')
+
+    def get_all_sorted_users_posts(self, user_id):
+        return self.model.objects.filter(user__id=user_id).order_by('pub_date')
+
+    def count_all_users_posts(self, user_id):
+        return self.model.objects.filter(user__id=user_id).count()
 
     def get_post_by_id(self, post_id: int):
         return get_object_or_404(self.model, id=post_id)

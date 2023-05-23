@@ -2,7 +2,7 @@ from django.http import HttpRequest
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
-from DjangoGramm.Base.base_test_case.base_case import BaseTestCase
+from tests.base_test_case.base_case import BaseTestCase
 from users import models
 from users.repositories import UserRepository
 

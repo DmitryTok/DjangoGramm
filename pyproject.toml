@@ -19,7 +19,7 @@ ignore = ["E999"]
 max-line-length = 120
 
 [tool.mypy]
-exclude = ["djangogramm_app/migrations/*"]
+exclude = ["djangogramm_app/migrations/*", "venv"]
 warn_unused_configs = true
 ignore_missing_imports = true
 

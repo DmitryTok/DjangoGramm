@@ -1,5 +1,5 @@
-from DjangoGramm.Base.base_test_case.base_case import BaseTestCase
 from djangogramm_app.models import Post
+from tests.base_test_case.base_case import BaseTestCase
 
 
 class TestPostViews(BaseTestCase):
