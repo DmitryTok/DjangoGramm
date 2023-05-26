@@ -60,6 +60,8 @@ class BaseTestCase(TestCase):
         cls.post_delete = 'post_delete'
         cls.post_like = 'post_like'
         cls.post_dislike = 'post_dislike'
+        cls.profile_follow = 'profile_follow'
+        cls.profile_unfollow = 'profile_unfollow'
 
     def setUp(self):
         super().setUp()

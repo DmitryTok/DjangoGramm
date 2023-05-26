@@ -49,6 +49,9 @@
                         <p>Full name: {{ user.full_name }}</p>
                         <p>Bio: {{ user.bio }}</p>
                         <p>Posts: {{ post_count }}</p>
+                        <p>
+                            <a href="{% url 'profile_followers' user.id %}" class="btn btn-outline-primary">Followers: {{ followers_count }}</a>
+                        </p>
                     </div>
                 </div>
           </div>
@@ -70,15 +73,16 @@
             <p>Post publication date: {{ post.pub_date|date:"d.m.Y" }}</p>
             <div class="container">
                 <div class="row">
-                        <div class="alert alert-primary col-md-1" role="alert">
-                            Likes {{ post.likes_count }}
-                        </div>
-                        <div class="alert alert-danger col-md-1" role="alert">
-                            Dislikes {{ post.dislikes_count }}
-                        </div>
+                    <div class="alert alert-primary col-md-1" role="alert">
+                        Likes {{ post.likes_count }}
+                    </div>
+                    <div class="alert alert-danger col-md-1" role="alert">
+                        Dislikes {{ post.dislikes_count }}
+                    </div>
                 </div>
             </div>
         </div>
+        <br>
             <p>
         {% if request.user.id == user.id %}
             <a href="{% url 'post_delete' post.id %}" class="btn btn-outline-danger">Delete Post</a>

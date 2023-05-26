@@ -148,3 +148,21 @@ class TestUsersViews(BaseTestCase):
         anon_response = self.guest_client.get(self.get_url(self.profile_list_url))
         self.assertEqual(anon_response.status_code, 302)
         self.assertRedirects(anon_response, self.get_url(self.login_url))
+
+    def test_follow_user_POST(self):
+        response = self.authorized_client.post(self.get_url(self.profile_follow, self.test_user.id))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, self.get_url(self.profile_url, self.test_user.id))
+
+        anon_response = self.guest_client.post(self.get_url(self.profile_follow, self.test_user.id))
+        self.assertEqual(anon_response.status_code, 302)
+        self.assertRedirects(anon_response, self.get_url('login'))
+
+    def test_unfollow_user_POST(self):
+        response = self.authorized_client.post(self.get_url(self.profile_unfollow, self.test_user.id))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, self.get_url(self.profile_url, self.test_user.id))
+
+        anon_response = self.guest_client.post(self.get_url(self.profile_unfollow, self.test_user.id))
+        self.assertEqual(anon_response.status_code, 302)
+        self.assertRedirects(anon_response, self.get_url('login'))

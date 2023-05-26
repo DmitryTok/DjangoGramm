@@ -5,6 +5,7 @@ from users.views import (
     CustomLoginView,
     DeleteProfile,
     EmailVerify,
+    FollowersList,
     FollowUser,
     Profile,
     ProfileList,
@@ -40,4 +41,5 @@ urlpatterns = [
     ),
     path('profile_follow/<user_id>', FollowUser.as_view(), name='profile_follow'),
     path('profile_unfollow/<user_id>', UnfollowUser.as_view(), name='profile_unfollow'),
+    path('profile/<user_id>/followers/', FollowersList.as_view(), name='profile_followers')
 ]

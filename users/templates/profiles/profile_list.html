@@ -5,7 +5,7 @@
     <h1>All Djangogramm Users</h1>
     <hr>
     <ul class="list-group">
-        {% for user in all_users %}
+        {% for user in page_obj %}
             {% if user.avatar.picture %}
         <div class="col mb-3" style="max-width: 780px;">
           <div class="row g-0">
@@ -25,11 +25,12 @@
                 </h5>
                 <p class="card-text">{{ user.bio }}</p>
                 <p class="card-text"><small class="text-muted">Last Updated: {{ user.last_login }}</small></p>
+                </div>
             </div>
+              </div>
           </div>
         </div>
         <br/>
         {% endfor %}
         </ul>
-    </div>
 {% endblock %}

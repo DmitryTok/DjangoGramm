@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <h1>Followers</h1>
+    <hr>
+    <ul class="list-group">
+        {% for follower in all_followers %}
+            <p>
+                <a href="{% url 'profile' follower.id %}" class="btn btn-outline-secondary">
+                    User: {{ follower.username }}
+                </a>
+            </p>
+        {% endfor %}
+    </ul>
+{% endblock %}

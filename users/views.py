@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.tokens import default_token_generator as token_generator
 from django.contrib.auth.views import LoginView
+from django.core.paginator import Paginator
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.views import View
@@ -106,6 +107,7 @@ class ProfileSettings(View):
 class Profile(View):
     template_name = 'profiles/profile.html'
 
+    # TODO: Create a pagination
     def get(self, request: HttpRequest, user_id: int) -> Union[HttpResponseRedirect, HttpResponse]:
         follow_repository = FollowRepository()
         post_repository = PostRepository()
@@ -115,11 +117,14 @@ class Profile(View):
             user = user_repository.get_user_id(user_id)
             posts = post_repository.get_all_sorted_users_posts(user_id)
             post_count = post_repository.count_all_users_posts(user_id)
+            followers_count = user_repository.get_count_followers_of_author(user_id)
             context = {
                 'user': user,
                 'posts': posts,
                 'post_count': post_count,
-                'following': following
+                'following': following,
+                'followers_count': followers_count
+
             }
             return render(request, self.template_name, context)
         else:
@@ -213,12 +218,17 @@ class DeleteProfile(View):
 class ProfileList(View):
     template_name = 'profiles/profile_list.html'
 
+    # TODO: Create a pagination
     def get(self, request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponse]:
         user_repository = UserRepository()
         if request.user.is_authenticated:
             all_users = user_repository.exclude_user(request)
+            paginator = Paginator(all_users, 10)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
             context = {
                 'all_users': all_users,
+                'page_obj': page_obj
             }
             return render(request, self.template_name, context)
         else:
@@ -232,31 +242,51 @@ class FollowUser(View):
     def post(request: HttpRequest, user_id: int) -> Union[HttpResponseRedirect, HttpResponse]:
         follow_repository = FollowRepository()
         user_repository = UserRepository()
-        author = user_repository.get_user_id(user_id)
-        if request.user.id == author.id:
-            messages.success(request, ('You Can Not Follow Yourself'))
-            return redirect('profile', request.user.id)
-        elif request.user != author:
-            follow_repository.create(user=request.user, author=author)
-            return redirect('profile', author.id)
+        if request.user.is_authenticated:
+            author = user_repository.get_user_id(user_id)
+            if request.user.id == author:
+                messages.success(request, ('You Can Not Follow Yourself'))
+                return redirect('profile', author.id)
+            elif request.user != author:
+                follow_repository.create(user=request.user, author=author)
+                return redirect('profile', author.id)
         else:
             messages.success(request, ('You Must Be Loged In To View This Page'))
             return redirect('login')
+        return redirect('profile', author.id)
 
 
 class UnfollowUser(View):
 
     @staticmethod
-    def post(request: HttpRequest, user_id: int) -> Union[HttpResponseRedirect, HttpResponse]:
+    def post(request: HttpRequest, user_id: int) -> Union[HttpResponseRedirect]:
         follow_repository = FollowRepository()
         user_repository = UserRepository()
         author = user_repository.get_user_id(user_id)
-        if request.user == author:
-            messages.success(request, ('You Can Not Unfollow Yourself'))
-            return redirect('profile', author.id)
-        elif request.user != author:
-            follow_repository.get_unfollow_user(request.user, user_id)
-            return redirect('profile', author.id)
+        if request.user.is_authenticated:
+            if request.user == author:
+                messages.success(request, ('You Can Not Unfollow Yourself'))
+                return redirect('profile', author.id)
+            elif request.user != author:
+                follow_repository.get_unfollow_user(request.user, user_id)
+                return redirect('profile', author.id)
+        else:
+            messages.success(request, ('You Must Be Loged In To View This Page'))
+            return redirect('login')
+
+
+class FollowersList(View):
+    template_name = 'profiles/profile_followers.html'
+
+    # TODO: Create a pagination
+    def get(self, request: HttpRequest, user_id: int) -> Union[HttpResponseRedirect, HttpResponse]:
+        user_repository = UserRepository()
+        if request.user.is_authenticated:
+            all_followers = user_repository.get_followers_of_author(user_id)
+            context = {
+                'all_followers': all_followers,
+            }
+            return render(request, self.template_name, context)
         else:
             messages.success(request, ('You Must Be Loged In To View This Page'))
             return redirect('login')

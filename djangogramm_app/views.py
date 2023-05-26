@@ -13,6 +13,7 @@ from djangogramm_app.utils import add_like_or_dislike, tags
 class PostView(View):
     template_name = 'index.html'
 
+    # TODO: Create a pagination
     def get(self, request: HttpRequest) -> HttpResponse:
         post_repository = PostRepository()
         posts = post_repository.get_all_posts()
