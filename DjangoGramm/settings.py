@@ -3,6 +3,8 @@ import sys
 from os import environ as env
 from pathlib import Path
 
+# import cloudinary_storage
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = env.get('SUPER_SECRET', default='django-insecure-qzb1y40)_a5q9#lf*hf_$lcbp+srju)7%(ussgj8+vc06uhw2r')
@@ -20,6 +22,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     'djangogramm_app',
+    'cloudinary',
+    'cloudinary_storage'
 ]
 
 MIDDLEWARE = [
@@ -131,3 +135,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'DjangoGramm/media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 TEST_DATABASE_PREFIX = 'test_'
+
+# TODO: Finish cloudinary storage images for project
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': env.get('CLOUDINARY_NAME'),
+    'API_KEY': env.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': env.get('CLOUDINARY_API_SECRET')
+}
