@@ -2,7 +2,7 @@
 <nav aria-label="Page navigation" class="my-5">
   <ul class="pagination">
     {% if page_obj.has_previous %}
-      <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+      <li class="page-item"><a class="page-link" href="?page=1">First Page</a></li>
       <li class="page-item">
         <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
           Previous
@@ -28,7 +28,7 @@
       </li>
       <li class="page-item">
         <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
-          Last
+          Last Page
         </a>
       </li>
     {% endif %}

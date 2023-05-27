@@ -1,6 +1,7 @@
 from typing import Union
 
 from django.contrib import messages
+from django.core.paginator import Paginator
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.views import View
@@ -13,14 +14,18 @@ from djangogramm_app.utils import add_like_or_dislike, tags
 class PostView(View):
     template_name = 'index.html'
 
-    # TODO: Create a pagination
+    # TODO: test pagination
     def get(self, request: HttpRequest) -> HttpResponse:
         post_repository = PostRepository()
         posts = post_repository.get_all_posts()
         user = request.user
+        paginator = Paginator(posts, 2)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
         context = {
             'user': user,
             'posts': posts,
+            'page_obj': page_obj
         }
         return render(request, self.template_name, context)
 

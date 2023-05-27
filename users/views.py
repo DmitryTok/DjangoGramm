@@ -107,7 +107,7 @@ class ProfileSettings(View):
 class Profile(View):
     template_name = 'profiles/profile.html'
 
-    # TODO: Create a pagination
+    # TODO: test pagination
     def get(self, request: HttpRequest, user_id: int) -> Union[HttpResponseRedirect, HttpResponse]:
         follow_repository = FollowRepository()
         post_repository = PostRepository()
@@ -118,13 +118,16 @@ class Profile(View):
             posts = post_repository.get_all_sorted_users_posts(user_id)
             post_count = post_repository.count_all_users_posts(user_id)
             followers_count = user_repository.get_count_followers_of_author(user_id)
+            paginator = Paginator(posts, 2)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
             context = {
                 'user': user,
                 'posts': posts,
                 'post_count': post_count,
                 'following': following,
-                'followers_count': followers_count
-
+                'followers_count': followers_count,
+                'page_obj': page_obj
             }
             return render(request, self.template_name, context)
         else:
@@ -218,12 +221,12 @@ class DeleteProfile(View):
 class ProfileList(View):
     template_name = 'profiles/profile_list.html'
 
-    # TODO: Create a pagination
+    # TODO: test pagination
     def get(self, request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponse]:
         user_repository = UserRepository()
         if request.user.is_authenticated:
             all_users = user_repository.exclude_user(request)
-            paginator = Paginator(all_users, 10)
+            paginator = Paginator(all_users, 2)
             page_number = request.GET.get('page')
             page_obj = paginator.get_page(page_number)
             context = {
@@ -278,13 +281,17 @@ class UnfollowUser(View):
 class FollowersList(View):
     template_name = 'profiles/profile_followers.html'
 
-    # TODO: Create a pagination
+    # TODO: test pagination
     def get(self, request: HttpRequest, user_id: int) -> Union[HttpResponseRedirect, HttpResponse]:
         user_repository = UserRepository()
         if request.user.is_authenticated:
             all_followers = user_repository.get_followers_of_author(user_id)
+            paginator = Paginator(all_followers, 2)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
             context = {
                 'all_followers': all_followers,
+                'page_obj': page_obj
             }
             return render(request, self.template_name, context)
         else:

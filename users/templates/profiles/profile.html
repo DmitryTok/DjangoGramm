@@ -55,7 +55,7 @@
                     </div>
                 </div>
           </div>
-{% for post in posts %}
+{% for post in page_obj %}
 <div class="card">
     <div class="card-body">
         <br>
@@ -91,4 +91,5 @@
 </div>
 <br>
 {% endfor %}
+    {% include 'includes/paginator.html' %}
 {% endblock %}

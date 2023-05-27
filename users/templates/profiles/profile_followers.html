@@ -5,7 +5,7 @@
     <h1>Followers</h1>
     <hr>
     <ul class="list-group">
-        {% for follower in all_followers %}
+        {% for follower in page_obj %}
             <p>
                 <a href="{% url 'profile' follower.id %}" class="btn btn-outline-secondary">
                     User: {{ follower.username }}
@@ -13,4 +13,5 @@
             </p>
         {% endfor %}
     </ul>
+    {% include 'includes/paginator.html' %}
 {% endblock %}
