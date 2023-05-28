@@ -8,3 +8,6 @@ SECRET_KEY=example(django-insecure-qzb1y40)_a5q9#lf*hf_$lcbp+srju)7%(ussgj8+vc06
 GET_EMAIL_HOST_USER=example(example@gmail.com) # specify email address for sending emails
 GET_EMAIL_HOST_PASSWORD=example(verysecretcode) # specify special code from your email system
 TEST_DB_NAME=example(test_djangogramm) # specify that we work with postgresql test data base
+CLOUDINARY_NAME=dfjmjzaw4
+CLOUDINARY_API_KEY=894441351422764
+CLOUDINARY_API_SECRET=e2otD2CMGKrOCGQtHxI9cdz7LGE

@@ -3,8 +3,6 @@ import sys
 from os import environ as env
 from pathlib import Path
 
-# import cloudinary_storage
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = env.get('SUPER_SECRET', default='django-insecure-qzb1y40)_a5q9#lf*hf_$lcbp+srju)7%(ussgj8+vc06uhw2r')
@@ -136,9 +134,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 TEST_DATABASE_PREFIX = 'test_'
 
-# TODO: Finish cloudinary storage images for project
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': env.get('CLOUDINARY_NAME'),
-    'API_KEY': env.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': env.get('CLOUDINARY_API_SECRET')
+    'CLOUD_NAME': env.get('CLOUDINARY_NAME', default='dfjmjzaw4'),
+    'API_KEY': env.get('CLOUDINARY_API_KEY', default='894441351422764'),
+    'API_SECRET': env.get('CLOUDINARY_API_SECRET', default='e2otD2CMGKrOCGQtHxI9cdz7LGE')
 }
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
