@@ -14,12 +14,11 @@ from djangogramm_app.utils import add_like_or_dislike, tags
 class PostView(View):
     template_name = 'index.html'
 
-    # TODO: test pagination
     def get(self, request: HttpRequest) -> HttpResponse:
         post_repository = PostRepository()
         posts = post_repository.get_all_posts()
         user = request.user
-        paginator = Paginator(posts, 2)
+        paginator = Paginator(posts, 20)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         context = {

@@ -6,7 +6,7 @@ from django.forms import EmailInput, Textarea, TextInput
 from django.utils.translation import gettext_lazy as _
 
 from djangogramm_app.models import Pictures
-from users.email_verification import send_email_verification
+from users.email_verification.send_email_verification import send_email_verification
 from users.models import User
 
 

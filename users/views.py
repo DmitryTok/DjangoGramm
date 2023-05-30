@@ -118,7 +118,7 @@ class Profile(View):
             posts = post_repository.get_all_sorted_users_posts(user_id)
             post_count = post_repository.count_all_users_posts(user_id)
             followers_count = user_repository.get_count_followers_of_author(user_id)
-            paginator = Paginator(posts, 2)
+            paginator = Paginator(posts, 10)
             page_number = request.GET.get('page')
             page_obj = paginator.get_page(page_number)
             context = {
@@ -225,8 +225,8 @@ class ProfileList(View):
     def get(self, request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponse]:
         user_repository = UserRepository()
         if request.user.is_authenticated:
-            all_users = user_repository.exclude_user(request)
-            paginator = Paginator(all_users, 2)
+            all_users = user_repository.exclude_user(request).order_by('date_joined')
+            paginator = Paginator(all_users, 10)
             page_number = request.GET.get('page')
             page_obj = paginator.get_page(page_number)
             context = {
@@ -286,7 +286,7 @@ class FollowersList(View):
         user_repository = UserRepository()
         if request.user.is_authenticated:
             all_followers = user_repository.get_followers_of_author(user_id)
-            paginator = Paginator(all_followers, 2)
+            paginator = Paginator(all_followers, 10)
             page_number = request.GET.get('page')
             page_obj = paginator.get_page(page_number)
             context = {

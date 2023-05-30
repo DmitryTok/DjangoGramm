@@ -1,8 +1,10 @@
 from django.contrib.auth.tokens import default_token_generator
+from django.core.paginator import Page
 from django.http import HttpRequest
 from django.utils.http import urlsafe_base64_encode
 
 from tests.base_test_case.base_case import BaseTestCase
+from users.repositories import FollowRepository
 
 
 class TestUsersViews(BaseTestCase):
@@ -21,7 +23,7 @@ class TestUsersViews(BaseTestCase):
             'password': 'testpassword'
         }
         cls.test_user_not_exists = {
-            'email': 'test_user_not_exists@example.com',
+            'email': 'test_user@example.com',
             'password': 'testpasswordnotexists'
         }
         cls.test_uidb64 = urlsafe_base64_encode(str(cls.test_user.pk).encode()).rstrip('=')
@@ -56,13 +58,14 @@ class TestUsersViews(BaseTestCase):
         self.assertNotContains(response, 'unexpected field')
 
     def test_login_POST(self):
-        response = self.guest_client.post(self.get_url(self.login_url), self.test_user_login)
+        response = self.guest_client.post(self.get_url(self.login_url), data=self.test_user_login)
         self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'registration/login.html')
         self.assertContains(response, 'Email address:')
         self.assertNotContains(response, 'unexpected field')
 
     def test_login_POST_wrong_password(self):
-        response = self.guest_client.post(self.get_url(self.login_url), self.test_user_not_exists)
+        response = self.guest_client.post(self.get_url(self.login_url), data=self.test_user_not_exists)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Email address:')
         self.assertNotContains(response, 'unexpected field')
@@ -81,7 +84,7 @@ class TestUsersViews(BaseTestCase):
     def test_email_verification_invalid_token(self):
         response = self.guest_client.get(self.get_url(self.test_verify, self.test_uidb64, 'invalid-token'))
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, self.get_url('invalid_verify'))
+        self.assertRedirects(response, self.get_url(self.test_invalid_verify))
 
     def test_profile_settings_GET(self):
         response = self.authorized_client.get(self.get_url(self.test_profile_settings))
@@ -156,7 +159,7 @@ class TestUsersViews(BaseTestCase):
 
         anon_response = self.guest_client.post(self.get_url(self.profile_follow, self.test_user.id))
         self.assertEqual(anon_response.status_code, 302)
-        self.assertRedirects(anon_response, self.get_url('login'))
+        self.assertRedirects(anon_response, self.get_url(self.login_url))
 
     def test_unfollow_user_POST(self):
         response = self.authorized_client.post(self.get_url(self.profile_unfollow, self.test_user.id))
@@ -165,4 +168,21 @@ class TestUsersViews(BaseTestCase):
 
         anon_response = self.guest_client.post(self.get_url(self.profile_unfollow, self.test_user.id))
         self.assertEqual(anon_response.status_code, 302)
-        self.assertRedirects(anon_response, self.get_url('login'))
+        self.assertRedirects(anon_response, self.get_url(self.login_url))
+
+    def test_all_followers_user_GET(self):
+        follow_repository = FollowRepository()
+        follow_repository.create(user=self.test_user_2, author=self.test_user)
+        response = self.authorized_client.get(self.get_url(self.profile_followers, self.test_user.id))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'profiles/profile_followers.html')
+        self.assertContains(response, 'Followers')
+        self.assertNotContains(response, 'Unfollowers')
+        self.assertIsInstance(response.context['page_obj'], Page)
+        self.assertEqual(response.context['page_obj'].number, 1)
+        self.assertIn(self.test_user_2, response.context['all_followers'])
+        self.assertNotIn(self.test_user, response.context['all_followers'])
+
+        anon_response = self.guest_client.get(self.get_url(self.profile_followers, self.test_user.id))
+        self.assertEqual(anon_response.status_code, 302)
+        self.assertRedirects(anon_response, self.get_url(self.login_url))

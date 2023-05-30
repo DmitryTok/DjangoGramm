@@ -46,8 +46,8 @@ class TestUserForms(BaseTestCase):
         self.assertTrue(form.is_valid())
 
     def test_user_register_form_not_valid(self):
-        form = UserRegisterForm(data=self.register_user)
-        self.assertTrue(form.is_valid())
+        form = UserRegisterForm(data={})
+        self.assertFalse(form.is_valid())
 
     def test_profile_form_valid(self):
         form = ProfileForm(data=self.profile_settings)

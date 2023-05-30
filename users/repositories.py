@@ -41,11 +41,9 @@ class UserRepository(BaseRepository):
             user = None
         return user
 
-# TODO: make tests
     def get_followers_of_author(self, user_id: int) -> object:
-        return self.model.objects.filter(follower__author_id=user_id)
+        return self.model.objects.filter(follower__author_id=user_id).order_by('id')
 
-    # TODO: make tests
     def get_count_followers_of_author(self, user_id: int) -> object:
         return self.model.objects.filter(follower__author_id=user_id).count()
 
@@ -60,4 +58,4 @@ class FollowRepository(BaseRepository):
         return self.model.objects.filter(user=user, author=user_id).exists()
 
     def get_unfollow_user(self, user: int, user_id: int) -> None:
-        return self.model.objects.filter(user=user, author=user_id).delete()
+        self.model.objects.filter(user=user, author=user_id).delete()

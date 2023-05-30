@@ -52,6 +52,7 @@ class BaseTestCase(TestCase):
         cls.logout_url = 'logout'
         cls.test_profile_settings = 'profile_settings'
         cls.test_verify = 'verify_email'
+        cls.test_invalid_verify = 'invalid_verify'
         cls.profile_url = 'profile'
         cls.update_profile_url = 'update_profile'
         cls.delete_profile_url = 'delete_profile'
@@ -62,6 +63,7 @@ class BaseTestCase(TestCase):
         cls.post_dislike = 'post_dislike'
         cls.profile_follow = 'profile_follow'
         cls.profile_unfollow = 'profile_unfollow'
+        cls.profile_followers = 'profile_followers'
 
     def setUp(self):
         super().setUp()
