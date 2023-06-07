@@ -6,7 +6,7 @@
     <form action="{% url 'profile_settings' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ profile_form.as_p }}
-        {{ profile_avatar_form }}
+        {{ profile_avatar_form.avatar }}
     <button type="submit" class="btn btn-success">Submit</button>
     </form>
 {% endblock %}

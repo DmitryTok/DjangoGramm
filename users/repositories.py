@@ -42,10 +42,10 @@ class UserRepository(BaseRepository):
         return user
 
     def get_followers_of_author(self, user_id: int) -> object:
-        return self.model.objects.filter(follower__author_id=user_id).order_by('id')
+        return self.model.objects.filter(follower__author=user_id).order_by('id')
 
     def get_count_followers_of_author(self, user_id: int) -> object:
-        return self.model.objects.filter(follower__author_id=user_id).count()
+        return self.model.objects.filter(follower__author=user_id).count()
 
 
 class FollowRepository(BaseRepository):

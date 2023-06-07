@@ -1,3 +1,6 @@
+import os
+import uuid
+
 from djangogramm_app.repositories import PostRepository, TagRepository
 
 
@@ -27,3 +30,16 @@ def add_like_or_dislike(request, post_id, is_liked=True):
         else:
             dislike_post.add(user)
             like_post.remove(user)
+
+
+def rename_image(instance, filename):
+    from users.repositories import UserRepository
+    user_repository = UserRepository()
+    post_repository = PostRepository()
+    extension = os.path.splitext(filename)[1]
+    if isinstance(instance, user_repository.model):
+        new_filename = f'user_avatar_{uuid.uuid4().hex}{extension}'
+        return f'avatars/{new_filename}'
+    elif isinstance(instance, post_repository.model):
+        new_filename = f'post_image_{uuid.uuid4().hex}{extension}'
+        return f'post_images/{new_filename}'

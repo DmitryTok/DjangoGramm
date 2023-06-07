@@ -43,6 +43,8 @@ exclude = [
     ".coveragerc",
     "users/templates",
     "djangogramm_app/templates",
+    "djangogramm_app/migrations",
+    "users/migrations",
     "multiprocessing"
 ]
 ignore = ["E999"]

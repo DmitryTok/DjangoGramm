@@ -24,6 +24,7 @@ class User(AbstractUser):
         blank=True,
         null=True
     )
+
     is_email_verify = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
@@ -53,4 +54,4 @@ class Follow(models.Model):
     )
 
     def __str__(self):
-        return f'{self.user} follow {self.author}'
+        return f'{self.user} follows {self.author}'

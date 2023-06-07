@@ -33,13 +33,13 @@
                 </p>
         </form>
             {% endif %}
-            {% if user.avatar.picture %}
+            {% if user.avatar.avatar %}
             <div class="col-md-2">
-              <img src="{{ user.avatar.picture.url }}" class="rounded" alt="{{ user.avatar.picture }}" style="width: 150%; height: 150;">
+              <img src="{{ user.avatar.avatar.url }}" class="rounded" alt="{{ user.avatar.avatar }}" style="width: 150%; height: 150;">
             </div>
               {% else %}
               <div class="col-md-2">
-                  <img src="{% static 'images/default_user_avatar.png' %}" class="rounded" alt="{{ user.avatar.picture }}" style="width: 100%; height: auto;">
+                  <img src="{% static 'images/default_user_avatar.png' %}" class="rounded" alt="{{ user.avatar.avatar }}" style="width: 100%; height: auto;">
               </div>
               {% endif %}
                 <div class="col-md-11">

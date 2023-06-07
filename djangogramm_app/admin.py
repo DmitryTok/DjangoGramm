@@ -43,12 +43,15 @@ class PictureAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'picture',
+        'avatar'
     )
     list_filter = (
         'id',
         'picture',
+        'avatar'
     )
     search_fields = (
         'id',
         'picture',
+        'avatar'
     )

@@ -68,15 +68,16 @@ class ProfileForm(forms.ModelForm):
 
 
 class PictureFormAvatar(forms.ModelForm):
-    picture = forms.ImageField(
-        label='Avatar',
-        widget=forms.ClearableFileInput(attrs={'multiple': False}),
-        required=False
-    )
 
     class Meta:
         model = Pictures
-        fields = ('picture',)
+        fields = ('picture', 'avatar')
+
+
+class AvatarForm(forms.ModelForm):
+    class Meta:
+        model = Pictures
+        fields = ('avatar',)
 
 
 class UserUpdateForm(forms.ModelForm):

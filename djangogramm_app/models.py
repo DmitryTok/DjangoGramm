@@ -1,11 +1,10 @@
+from cloudinary.models import CloudinaryField
 from django.db import models
 
 
 class Pictures(models.Model):
-    picture = models.ImageField(upload_to='pictures', max_length=300)
-
-    def __str__(self):
-        return f'Image {self.picture}'
+    picture = CloudinaryField('image', folder='post_image', blank=True)
+    avatar = CloudinaryField('image', folder='avatar', blank=True)
 
 
 class Tag(models.Model):

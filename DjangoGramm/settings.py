@@ -134,10 +134,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 TEST_DATABASE_PREFIX = 'test_'
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': env.get('CLOUDINARY_NAME', default='dfjmjzaw4'),
-    'API_KEY': env.get('CLOUDINARY_API_KEY', default='894441351422764'),
-    'API_SECRET': env.get('CLOUDINARY_API_SECRET', default='e2otD2CMGKrOCGQtHxI9cdz7LGE')
+CLOUDINARY = {
+    'cloud_name': env.get('CLOUDINARY_NAME', default='dfjmjzaw4'),
+    'api_key': env.get('CLOUDINARY_API_KEY', default='894441351422764'),
+    'api_secret': env.get('CLOUDINARY_API_SECRET', default='e2otD2CMGKrOCGQtHxI9cdz7LGE')
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

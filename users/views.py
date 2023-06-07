@@ -12,7 +12,7 @@ from django.views import View
 from djangogramm_app.models import Pictures
 from djangogramm_app.repositories import PostRepository
 from users.email_verification.send_email_verification import send_email_verification
-from users.forms import CustomAuthenticationForm, PictureFormAvatar, ProfileForm, UserRegisterForm, UserUpdateForm
+from users.forms import AvatarForm, CustomAuthenticationForm, ProfileForm, UserRegisterForm, UserUpdateForm
 from users.repositories import FollowRepository, UserRepository
 
 
@@ -66,7 +66,7 @@ class ProfileSettings(View):
         if request.user.is_authenticated:
             context = {
                 'profile_form': ProfileForm(instance=request.user),
-                'profile_avatar_form': PictureFormAvatar(instance=request.user.avatar)
+                'profile_avatar_form': AvatarForm(instance=request.user.avatar)
             }
             return render(request, self.template_name, context)
         else:
@@ -75,7 +75,7 @@ class ProfileSettings(View):
 
     def post(self, request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponse]:
         profile_form = ProfileForm(request.POST, instance=request.user)
-        profile_avatar_form = PictureFormAvatar(
+        profile_avatar_form = AvatarForm(
             request.POST or None,
             request.FILES or None,
             instance=request.user.avatar
@@ -83,15 +83,15 @@ class ProfileSettings(View):
 
         if profile_form.is_valid() and profile_avatar_form.is_valid():
             profile_form.save(commit=False)
-            avatar = request.FILES.get('picture')
+            avatar = request.FILES.get('avatar')
             if avatar:
-                image = Pictures(picture=avatar)
+                image = Pictures(avatar=avatar)
                 image.save()
                 request.user.avatar = image
             profile_form.save()
             return redirect('profile', request.user.id)
         else:
-            profile_avatar_form = PictureFormAvatar(
+            profile_avatar_form = AvatarForm(
                 request.POST or None,
                 request.FILES or None,
                 instance=request.user.avatar
@@ -107,7 +107,6 @@ class ProfileSettings(View):
 class Profile(View):
     template_name = 'profiles/profile.html'
 
-    # TODO: test pagination
     def get(self, request: HttpRequest, user_id: int) -> Union[HttpResponseRedirect, HttpResponse]:
         follow_repository = FollowRepository()
         post_repository = PostRepository()
@@ -127,7 +126,7 @@ class Profile(View):
                 'post_count': post_count,
                 'following': following,
                 'followers_count': followers_count,
-                'page_obj': page_obj
+                'page_obj': page_obj,
             }
             return render(request, self.template_name, context)
         else:
@@ -145,7 +144,7 @@ class UpdateProfile(View):
             context = {
                 'extra_fields_form': ProfileForm(instance=current_user),
                 'common_form': UserUpdateForm(instance=current_user),
-                'profile_avatar_form': PictureFormAvatar(instance=request.user.avatar)
+                'profile_avatar_form': AvatarForm(instance=request.user.avatar)
             }
             return render(request, self.template_name, context)
         else:
@@ -162,16 +161,16 @@ class UpdateProfile(View):
                 request.FILES or None,
                 instance=current_user
             )
-            profile_avatar_form = PictureFormAvatar(
+            profile_avatar_form = AvatarForm(
                 request.POST or None,
                 request.FILES or None,
                 instance=current_user.avatar)
             if common_form.is_valid() and extra_fields_form.is_valid() and profile_avatar_form.is_valid():
                 common_form.save()
                 extra_fields_form.save(commit=False)
-                avatar = request.FILES.get('picture')
+                avatar = request.FILES.get('avatar')
                 if avatar:
-                    image = Pictures(picture=avatar)
+                    image = Pictures(avatar=avatar)
                     image.save()
                     current_user.avatar = image
                     current_user.save()
@@ -221,7 +220,6 @@ class DeleteProfile(View):
 class ProfileList(View):
     template_name = 'profiles/profile_list.html'
 
-    # TODO: test pagination
     def get(self, request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponse]:
         user_repository = UserRepository()
         if request.user.is_authenticated:
@@ -281,7 +279,6 @@ class UnfollowUser(View):
 class FollowersList(View):
     template_name = 'profiles/profile_followers.html'
 
-    # TODO: test pagination
     def get(self, request: HttpRequest, user_id: int) -> Union[HttpResponseRedirect, HttpResponse]:
         user_repository = UserRepository()
         if request.user.is_authenticated:
