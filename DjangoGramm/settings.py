@@ -3,6 +3,13 @@ import sys
 from os import environ as env
 from pathlib import Path
 
+from django.http import HttpRequest
+
+
+def custom_show_toolbar(request: HttpRequest) -> bool:
+    return True
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = env.get('SUPER_SECRET', default='django-insecure-qzb1y40)_a5q9#lf*hf_$lcbp+srju)7%(ussgj8+vc06uhw2r')
@@ -21,10 +28,18 @@ INSTALLED_APPS = [
     'users',
     'djangogramm_app',
     'cloudinary',
-    'cloudinary_storage'
+    'cloudinary_storage',
+    'debug_toolbar',
+]
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+    '0.0.0.0:8000',
+    'localhost'
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -126,6 +141,11 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'users/static'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static_src'
+]
+
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'DjangoGramm/media')
@@ -141,3 +161,9 @@ CLOUDINARY = {
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': 'DjangoGramm.settings.custom_show_toolbar',
+    'DISABLE_PANELS': {'debug_toolbar.panels.redirects.RedirectsPanel'},
+    'SHOW_COLLAPSED': True,
+}

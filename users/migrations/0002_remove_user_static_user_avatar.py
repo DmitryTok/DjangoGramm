@@ -19,6 +19,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='avatar',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='djangogramm_app.pictures'),
+            field=models.ForeignKey(
+                blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='djangogramm_app.pictures'),
         ),
     ]

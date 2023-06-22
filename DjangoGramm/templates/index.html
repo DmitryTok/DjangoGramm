@@ -25,22 +25,22 @@
                       <div class="container">
                            <div class="row">
                                <div class="col-2">
-                                   <form action="{% url 'post_like' post.id %}" method="post">
+                                   <form method="post" action="{% url 'post_like' post.id %}" id="form_ajax_like">
                                        {% csrf_token %}
                                     {% if user in post.likes.all %}
-                                        <button type="submit" class="btn btn-primary">Likes: {{ post.likes_count }}</button>
+                                        <button type="button" class="btn btn-primary unlike-button" data-post-id="{{ post.id }}">Likes: {{ post.likes_count }}</button>
                                     {% else %}
-                                        <button type="submit" class="btn btn-outline-primary">Likes: {{ post.likes_count }}</button>
+                                        <button type="button" class="btn btn-outline-primary like-button" data-post-id="{{ post.id }}">Likes: {{ post.likes_count }}</button>
                                     {% endif %}
                                    </form>
                                </div>
                                <div class="col-2">
-                                   <form action="{% url 'post_dislike' post.id %}" method="post">
+                                   <form action="{% url 'post_dislike' post.id %}" method="post" id="form_ajax_dislike">
                                         {% csrf_token %}
                                     {% if user in post.dislikes.all %}
-                                        <button type="submit" class="btn btn-danger">Dislikes: {{ post.dislikes_count }}</button>
+                                        <button type="button" class="btn btn-danger undislike-button" data-post-id="{{ post.id }}">Dislikes: {{ post.dislikes_count }}</button>
                                     {% else %}
-                                        <button type="submit" class="btn btn-outline-danger">Dislikes: {{ post.dislikes_count }}</button>
+                                        <button type="button" class="btn btn-outline-danger dislike-button" data-post-id="{{ post.id }}">Dislikes: {{ post.dislikes_count }}</button>
                                     {% endif %}
                                    </form>
                                </div>

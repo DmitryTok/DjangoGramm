@@ -1,8 +1,9 @@
+from http import HTTPStatus
 from typing import Union
 
 from django.contrib import messages
 from django.core.paginator import Paginator
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.views import View
 
@@ -110,22 +111,32 @@ class DeletePostView(View):
 class LikePostView(View):
 
     @staticmethod
-    def post(request: HttpRequest, post_id: int) -> HttpResponseRedirect:
+    def post(request: HttpRequest, post_id: int) -> Union[JsonResponse, HttpResponse]:
         if request.user.is_authenticated:
+            post_repository = PostRepository()
             add_like_or_dislike(request, post_id, is_liked=True)
-            return redirect('index')
+            post = post_repository.get_post_by_id(post_id)
+            response_data = {
+                'likes_count': post.likes_count(),
+                'dislikes_count': post.dislikes_count()
+            }
+            return JsonResponse(response_data, status=HTTPStatus.OK)
         else:
-            messages.success(request, ('You Must Be Loged In To View This Page!'))
-            return redirect('login')
+            return HttpResponse(status=HTTPStatus.BAD_REQUEST)
 
 
 class DisLikePostView(View):
 
     @staticmethod
-    def post(request: HttpRequest, post_id: int) -> HttpResponseRedirect:
+    def post(request: HttpRequest, post_id: int) -> Union[JsonResponse, HttpResponse]:
         if request.user.is_authenticated:
+            post_repository = PostRepository()
             add_like_or_dislike(request, post_id, is_liked=False)
-            return redirect('index')
+            post = post_repository.get_post_by_id(post_id)
+            response_data = {
+                'likes_count': post.likes_count(),
+                'dislikes_count': post.dislikes_count()
+            }
+            return JsonResponse(response_data, status=HTTPStatus.OK)
         else:
-            messages.success(request, ('You Must Be Loged In To View This Page!'))
-            return redirect('login')
+            return HttpResponse(status=HTTPStatus.BAD_REQUEST)
