@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from typing import Union
 
 from django.contrib import messages
@@ -5,7 +6,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.tokens import default_token_generator as token_generator
 from django.contrib.auth.views import LoginView
 from django.core.paginator import Paginator
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.views import View
 
@@ -240,40 +241,54 @@ class ProfileList(View):
 class FollowUser(View):
 
     @staticmethod
-    def post(request: HttpRequest, user_id: int) -> Union[HttpResponseRedirect, HttpResponse]:
+    def post(request: HttpRequest, user_id: int) -> JsonResponse:
         follow_repository = FollowRepository()
         user_repository = UserRepository()
+
         if request.user.is_authenticated:
             author = user_repository.get_user_id(user_id)
-            if request.user.id == author:
-                messages.success(request, ('You Can Not Follow Yourself'))
-                return redirect('profile', author.id)
-            elif request.user != author:
+            if request.user.id == author.id:
+                return JsonResponse({'message': 'You cannot follow yourself'}, status=HTTPStatus.BAD_REQUEST)
+            elif not follow_repository.get_user_follow(request.user, author):
                 follow_repository.create(user=request.user, author=author)
-                return redirect('profile', author.id)
+                response_data = {
+                    'user': author.username,
+                }
+                return JsonResponse(response_data, status=HTTPStatus.CREATED)
+            else:
+                return JsonResponse(
+                    {'message': f'You are already following {author.username}'},
+                    status=HTTPStatus.BAD_REQUEST
+                )
         else:
-            messages.success(request, ('You Must Be Loged In To View This Page'))
-            return redirect('login')
-        return redirect('profile', author.id)
+            return JsonResponse({'message': 'You must be logged in to view this page'}, status=HTTPStatus.BAD_REQUEST)
 
 
 class UnfollowUser(View):
 
     @staticmethod
-    def post(request: HttpRequest, user_id: int) -> Union[HttpResponseRedirect]:
+    def post(request: HttpRequest, user_id: int) -> HttpResponse | JsonResponse:
         follow_repository = FollowRepository()
         user_repository = UserRepository()
-        author = user_repository.get_user_id(user_id)
+
         if request.user.is_authenticated:
+            author = user_repository.get_user_id(user_id)
             if request.user == author:
-                messages.success(request, ('You Can Not Unfollow Yourself'))
-                return redirect('profile', author.id)
-            elif request.user != author:
-                follow_repository.get_unfollow_user(request.user, user_id)
-                return redirect('profile', author.id)
+                return JsonResponse({'message': 'You cannot unfollow yourself'}, status=HTTPStatus.BAD_REQUEST)
+            elif follow_repository.get_user_follow(request.user, author):
+                follow_repository.delete_unfollow_user(request.user, author)
+                # TODO: Pass following in to request method
+                return JsonResponse(
+                    {'message': f'Unfollow user {author.username}', 'user': author.username},
+                    status=HTTPStatus.NO_CONTENT
+                )
+            else:
+                return JsonResponse(
+                    {'message': f'You are already unfollowing {author.username}'},
+                    status=HTTPStatus.BAD_REQUEST
+                )
         else:
-            messages.success(request, ('You Must Be Loged In To View This Page'))
-            return redirect('login')
+            return JsonResponse({'message': 'You must be logged in to view this page'}, status=HTTPStatus.BAD_REQUEST)
 
 
 class FollowersList(View):

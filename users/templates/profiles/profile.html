@@ -4,25 +4,38 @@
     <div class="row">
         <h1>Profile</h1>
         <br>
-        <div class="col-md-2">
-            {% if request.user.id != user.id %}
+            <div class="col-md-2">
+              {% if request.user.id != user.id %}
                 {% if following %}
-                    <form method="post" action="{% url 'profile_unfollow' user.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-danger">
-                            Unfollow {{ user.username }}
-                        </button>
-                    </form>
+                  <form method="post" action="{% url 'profile_unfollow' user.id %}" id="form_ajax_unfollow">
+                    {% csrf_token %}
+                    <button
+                            type="button"
+                            class="btn btn-outline-danger unfollow-button"
+                            data-user-username="{{ user.username }}"
+                            data-unfollow-id="{{ user.id }}"
+                            data-request-user-id="{{ request.user.id }}"
+                    >
+                      Unfollow {{ user.username }}
+                    </button>
+                  </form>
                 {% else %}
-                    <form method="post" action="{% url 'profile_follow' user.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-success">
-                            Follow {{ user.username }}
-                        </button>
-                    </form>
+                  <form method="post" action="{% url 'profile_follow' user.id %}" id="form_ajax_follow">
+                    {% csrf_token %}
+                    <button
+                            type="button"
+                            class="btn btn-outline-success follow-button"
+                            data-user-username="{{ user.username }}"
+                            data-follow-id="{{ user.id }}"
+                            data-request-user-id="{{ request.user.id }}"
+                            data-profile-update="{% url 'profile' user.id %}"
+                    >
+                      Follow {{ user.username }}
+                    </button>
+                  </form>
                 {% endif %}
-            {% endif %}
-        </div>
+              {% endif %}
+            </div>
         <p>
         <form method="post">
             {% csrf_token %}
@@ -43,7 +56,7 @@
               </div>
               {% endif %}
                 <div class="col-md-11">
-                    <div class="card-body">
+                    <div class="card-body" id="profile-data">
                         <p>User: {{ user.username }}</p>
                         <p>Email: {{ user.email }}</p>
                         <p>Full name: {{ user.full_name }}</p>

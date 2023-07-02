@@ -55,7 +55,7 @@ class FollowRepository(BaseRepository):
         return models.Follow
 
     def get_user_follow(self, user: int, user_id: int) -> Union[HttpResponse, models.Follow]:
-        return self.model.objects.filter(user=user, author=user_id).exists()
+        return self.model.objects.filter(user=user, author=user_id).first()
 
-    def get_unfollow_user(self, user: int, user_id: int) -> None:
+    def delete_unfollow_user(self, user: int, user_id: int) -> None:
         self.model.objects.filter(user=user, author=user_id).delete()

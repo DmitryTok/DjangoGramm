@@ -1,49 +1,95 @@
-$(document).ready(function() {
-  $('.like-button, .unlike-button').click(function() {
-    var button = $(this);
-    var form = button.closest('form');
+const getCookie = name => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+};
 
-    $.ajax({
-      type: 'POST',
-      url: form.attr('action'),
-      data: form.serialize(),
-      success: function(response) {
-        console.log('Like Request Successful');
-        console.log(response);
+const getProfileData = (userId) => {
+  const profileUrl = `http://localhost:8000/users/profile/${userId}`;
 
-        button.toggleClass('btn-outline-primary like-button btn-primary unlike-button');
-        button.text('Likes: ' + response.likes_count);
-        form.find('.dislike-button, .undislike-button').removeClass('btn-danger undislike-button').addClass('btn-outline-danger dislike-button');
-        form.find('.dislike-button, .undislike-button').text('Dislikes: ' + response.dislikes_count);
-      },
-      error: function(xhr, status, error) {
-        console.log('Like Request Error');
-        console.log(error);
+  fetch(profileUrl)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
-    });
+      return response.text();
+    })
+    .then(data => {
+      console.log(data);
+    })
+    .catch(error => console.error(error));
+};
+
+const handleFollow = () => {
+  const followButton = document.querySelector('#form_ajax_follow .follow-button');
+  const userId = followButton.dataset.followId;
+  const followUrl = `http://localhost:8000/users/profile_follow/${userId}`;
+  const username = followButton.dataset.userUsername;
+  const httpHeaders = {
+    'Content-type': 'application/json',
+    'X-CSRFToken': getCookie('csrftoken'),
+  };
+
+  fetch(followUrl, {
+    method: 'POST',
+    headers: httpHeaders,
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+      console.log(response);
+      return response.json();
+    })
+    .then(data => {
+      console.log(data);
+      followButton.textContent = `Unfollow ${username}`;
+      followButton.classList.remove('btn-outline-success');
+      followButton.classList.add('btn-outline-danger');
+
+      getProfileData(userId);
+    })
+    .catch(error => console.error(error));
+};
+
+const handleUnfollow = () => {
+  const unfollowButton = document.querySelector('#form_ajax_unfollow .unfollow-button');
+  const userId = unfollowButton.dataset.unfollowId;
+  const unfollowUrl = `http://localhost:8000/users/profile_unfollow/${userId}`;
+  const username = unfollowButton.dataset.userUsername;
+  const httpHeaders = {
+    'Content-type': 'application/json',
+    'X-CSRFToken': getCookie('csrftoken'),
+  };
+
+  fetch(unfollowUrl, {
+    method: 'POST',
+    headers: httpHeaders,
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+      console.log(response);
+      return response.text();
+    })
+    .then(data => {
+      console.log(data);
+      unfollowButton.textContent = `Follow ${username}`;
+      unfollowButton.classList.remove('btn-outline-danger');
+      unfollowButton.classList.add('btn-outline-success');
+
+      getProfileData(userId);
+    })
+    .catch(error => console.error(error));
+};
+
+$(document).ready(function() {
+  $("#form_ajax_follow .follow-button").click(function() {
+    handleFollow();
   });
 
-  $('.dislike-button, .undislike-button').click(function() {
-    var button = $(this);
-    var form = button.closest('form');
-
-    $.ajax({
-      type: 'POST',
-      url: form.attr('action'),
-      data: form.serialize(),
-      success: function(response) {
-        console.log('Dislike Request Successful');
-        console.log(response);
-
-        button.toggleClass('btn-outline-danger dislike-button btn-danger undislike-button');
-        button.text('Dislikes: ' + response.dislikes_count);
-        form.find('.like-button, .unlike-button').removeClass('btn-primary unlike-button').addClass('btn-outline-primary like-button');
-        form.find('.like-button, .unlike-button').text('Likes: ' + response.likes_count);
-      },
-      error: function(xhr, status, error) {
-        console.log('Dislike Request Error');
-        console.log(error);
-      }
-    });
+  $("#form_ajax_unfollow .unfollow-button").click(function() {
+    handleUnfollow();
   });
 });
