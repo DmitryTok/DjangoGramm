@@ -1,95 +1,114 @@
-const getCookie = name => {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-};
+    function getCookie(name) {
+        const cookieValue = document.cookie.split('; ')
+            .find(cookie => cookie.startsWith(name + '='))
+            .split('=')[1];
+        return cookieValue;
+    }
 
-const getProfileData = (userId) => {
-  const profileUrl = `http://localhost:8000/users/profile/${userId}`;
+    document.addEventListener('DOMContentLoaded', () => {
+        const followButton = document.querySelector('.follow-button');
 
-  fetch(profileUrl)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
-      }
-      return response.text();
-    })
-    .then(data => {
-      console.log(data);
-    })
-    .catch(error => console.error(error));
-};
+        if (followButton) {
+            followButton.addEventListener('click', () => {
+                const isFollowing = followButton.textContent.includes('Unfollow');
+                const userId = followButton.dataset.followId;
+                const followUrl = isFollowing
+                    ? `http://localhost:8000/users/profile_unfollow/${userId}`
+                    : `http://localhost:8000/users/profile_follow/${userId}`;
+                const username = followButton.dataset.userUsername;
+                const httpHeaders = {
+                    'Content-type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                };
 
-const handleFollow = () => {
-  const followButton = document.querySelector('#form_ajax_follow .follow-button');
-  const userId = followButton.dataset.followId;
-  const followUrl = `http://localhost:8000/users/profile_follow/${userId}`;
-  const username = followButton.dataset.userUsername;
-  const httpHeaders = {
-    'Content-type': 'application/json',
-    'X-CSRFToken': getCookie('csrftoken'),
-  };
+                fetch(followUrl, {
+                    method: 'POST',
+                    headers: httpHeaders,
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Error: ${response.status} ${response.statusText}`);
+                        }
+                        console.log(response);
+                        return response.text();
+                    })
+                    .then(data => {
+                        console.log(data);
+                        if (isFollowing) {
+                            followButton.textContent = `Follow ${username}`;
+                            followButton.classList.remove('btn-danger');
+                            followButton.classList.add('btn-success');
 
-  fetch(followUrl, {
-    method: 'POST',
-    headers: httpHeaders,
-  })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
-      }
-      console.log(response);
-      return response.json();
-    })
-    .then(data => {
-      console.log(data);
-      followButton.textContent = `Unfollow ${username}`;
-      followButton.classList.remove('btn-outline-success');
-      followButton.classList.add('btn-outline-danger');
+                        } else {
+                            followButton.textContent = `Unfollow ${username}`;
+                            followButton.classList.remove('btn-success');
+                            followButton.classList.add('btn-danger');
 
-      getProfileData(userId);
-    })
-    .catch(error => console.error(error));
-};
+                        }
+                    })
+                    .catch(error => console.error(error));
+            });
+        }
+    });
+document.addEventListener('DOMContentLoaded', () => {
+  const likeButtons = document.querySelectorAll('.like-button');
+  const dislikeButtons = document.querySelectorAll('.dislike-button');
 
-const handleUnfollow = () => {
-  const unfollowButton = document.querySelector('#form_ajax_unfollow .unfollow-button');
-  const userId = unfollowButton.dataset.unfollowId;
-  const unfollowUrl = `http://localhost:8000/users/profile_unfollow/${userId}`;
-  const username = unfollowButton.dataset.userUsername;
-  const httpHeaders = {
-    'Content-type': 'application/json',
-    'X-CSRFToken': getCookie('csrftoken'),
-  };
+  likeButtons.forEach(likeButton => {
+    likeButton.addEventListener('click', () => {
+      const isLiked = likeButton.classList.contains('btn-primary');
+      const postId = likeButton.dataset.postId;
+      const likeUrl = `/post_like/${postId}`;
+      const httpHeaders = {
+        'Content-type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken'),
+      };
 
-  fetch(unfollowUrl, {
-    method: 'POST',
-    headers: httpHeaders,
-  })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
-      }
-      console.log(response);
-      return response.text();
-    })
-    .then(data => {
-      console.log(data);
-      unfollowButton.textContent = `Follow ${username}`;
-      unfollowButton.classList.remove('btn-outline-danger');
-      unfollowButton.classList.add('btn-outline-success');
-
-      getProfileData(userId);
-    })
-    .catch(error => console.error(error));
-};
-
-$(document).ready(function() {
-  $("#form_ajax_follow .follow-button").click(function() {
-    handleFollow();
+      fetch(likeUrl, {
+        method: 'POST',
+        headers: httpHeaders,
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Error: ${response.status} ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          likeButton.textContent = `Likes: ${data.likes_count}`;
+          likeButton.classList.toggle('btn-primary');
+          likeButton.classList.toggle('btn-outline-primary');
+        })
+        .catch(error => console.error(error));
+    });
   });
 
-  $("#form_ajax_unfollow .unfollow-button").click(function() {
-    handleUnfollow();
+  dislikeButtons.forEach(dislikeButton => {
+    dislikeButton.addEventListener('click', () => {
+      const isDisliked = dislikeButton.classList.contains('btn-danger');
+      const postId = dislikeButton.dataset.postId;
+      const dislikeUrl = `post_dislike/${postId}`;
+      const httpHeaders = {
+        'Content-type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken'),
+      };
+
+      fetch(dislikeUrl, {
+        method: 'POST',
+        headers: httpHeaders,
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Error: ${response.status} ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          dislikeButton.textContent = `Dislikes: ${data.dislikes_count}`;
+          dislikeButton.classList.toggle('btn-danger');
+          dislikeButton.classList.toggle('btn-outline-danger');
+        })
+        .catch(error => console.error(error));
+    });
   });
 });
