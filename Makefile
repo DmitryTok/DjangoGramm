@@ -1,6 +1,6 @@
-.PHONY: run_app
-run_app:
-	python3 manage.py runserver
+.PHONY: run
+run:
+	docker-compose up
 
 .PHONY: up
 up: migrate
