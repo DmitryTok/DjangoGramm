@@ -46,7 +46,7 @@ exclude = [
     "djangogramm_app/templates",
     "djangogramm_app/migrations",
     "users/migrations",
-    "multiprocessing"
+    "multiprocessing",
 ]
 ignore = ["E999"]
 max-line-length = 120

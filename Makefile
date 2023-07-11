@@ -6,6 +6,10 @@ run:
 up: migrate
 	docker-compose up
 
+.PHONY: stop_docker
+stop:
+	docker-compose stop
+
 .PHONY: close_docker-compose_file
 down:
 	docker-compose down -v

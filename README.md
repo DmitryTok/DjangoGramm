@@ -29,12 +29,26 @@ TEST_DB_NAME=<..> # specify that we work with postgresql test data base
 ```
 
 #### Create a superuser
-```
+```commandline
 make superuser
 ```
 #### After superuser run container
+```commandline
+make run
 ```
-make up
+#### To stop container
+```commandline
+make stop
+```
+
+#### To create a webpack for JS
+```commandline
+npm run build
+```
+
+#### To run a webpack
+```commandline
+npm start
 ```
 
 ## Server will be available at this address: http://localhost:8000/
