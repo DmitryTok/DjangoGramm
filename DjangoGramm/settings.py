@@ -4,6 +4,9 @@ from os import environ as env
 from pathlib import Path
 
 from django.http import HttpRequest
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def custom_show_toolbar(request: HttpRequest) -> bool:
@@ -30,7 +33,21 @@ INSTALLED_APPS = [
     'cloudinary',
     'cloudinary_storage',
     'debug_toolbar',
+    'social_django',
 ]
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.github.GithubOAuth2',
+]
+
+SOCIAL_AUTH_GITHUB_KEY = env.get('GITHUB_CLIENT_ID')
+SOCIAL_AUTH_GITHUB_SECRET = env.get('GITHUB_SECRET_ID')
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.get('GOOGLE_CLIENT_ID')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.get('GOOGLE_SECRET_ID')
+
 
 INTERNAL_IPS = [
     '127.0.0.1',
@@ -74,6 +91,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },

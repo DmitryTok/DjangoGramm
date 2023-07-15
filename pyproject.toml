@@ -23,6 +23,9 @@ django-cloudinary-storage = "0.3.0"
 cloudinary = "1.30.0"
 poetry = "1.5.0"
 django-debug-toolbar = "^4.1.0"
+django-allauth = "^0.54.0"
+python-dotenv = "^1.0.0"
+social-auth-app-django = "^5.2.0"
 
 [build-system]
 requires = ["poetry-core"]

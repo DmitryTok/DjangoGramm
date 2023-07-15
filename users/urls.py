@@ -18,6 +18,7 @@ from users.views import (
 urlpatterns = [
     path('login/', CustomLoginView.as_view(), name='login'),
     path('', include('django.contrib.auth.urls')),
+    path('social_auth/', include('social_django.urls', namespace='social')),
     path(
         'invalid_verify/',
         TemplateView.as_view(template_name='registration/invalid_verify.html'),
