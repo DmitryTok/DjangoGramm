@@ -47,6 +47,14 @@ class UserRegisterForm(UserCreationForm):
         model = User
         fields = ('email', 'username')
 
+    def clean_email(self) -> str:
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError(
+                'This email is already registered. Please try to login or use a different email.'
+            )
+        return email
+
 
 class ProfileForm(forms.ModelForm):
     full_name = forms.CharField(

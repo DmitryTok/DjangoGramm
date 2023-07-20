@@ -30,7 +30,7 @@ class EmailVerify(View):
         if user is not None and token_generator.check_token(user, token):
             user.is_email_verify = True
             user.save()
-            login(request, user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect('profile_settings')
         return redirect('invalid_verify')
 
