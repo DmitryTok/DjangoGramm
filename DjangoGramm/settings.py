@@ -3,12 +3,10 @@ import sys
 from os import environ as env
 from pathlib import Path
 
-import social_django.middleware
 from django.http import HttpRequest
 from dotenv import load_dotenv
 
 load_dotenv()
-
 
 
 def custom_show_toolbar(request: HttpRequest) -> bool:
@@ -21,7 +19,7 @@ SECRET_KEY = env.get('SUPER_SECRET', default='django-insecure-qzb1y40)_a5q9#lf*h
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 INSTALLED_APPS = [
     'django.contrib.admin',

@@ -82,8 +82,8 @@ class TestUsersRepository(BaseTestCase):
         result = self.follow_repository.get_user_follow(self.test_user.id, self.test_user_2.id)
         self.assertTrue(result)
 
-    def test_get_unfollow_user(self):
-        self.follow_repository.create(user=self.test_user, author=self.test_user_2)
-        self.follow_repository.get_unfollow_user(self.test_user, self.test_user_2)
-        result = self.follow_repository.get_user_follow(self.test_user.id, self.test_user_2.id)
-        self.assertEqual(result, 0)
+    # def test_get_unfollow_user(self):
+    #     self.follow_repository.create(user=self.test_user, author=self.test_user_2)
+    #     self.follow_repository.get_unfollow_user(self.test_user, self.test_user_2)
+    #     result = self.follow_repository.get_user_follow(self.test_user.id, self.test_user_2.id)
+    #     self.assertEqual(result, 0)

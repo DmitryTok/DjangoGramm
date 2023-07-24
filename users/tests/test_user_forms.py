@@ -42,8 +42,20 @@ class TestUserForms(BaseTestCase):
         self.assertFalse(form.is_valid())
 
     def test_user_register_form_valid(self):
-        form = UserRegisterForm(data=self.register_user)
-        self.assertTrue(form.is_valid())
+        form_valid = UserRegisterForm(data=self.register_user)
+        self.assertTrue(form_valid.is_valid())
+
+        form_invalid = UserRegisterForm(data={
+            'email': 'test_user@example.com',
+            'username': 'testuser2',
+            'password1': 'securepassword456',
+            'password2': 'securepassword456',
+        })
+        self.assertFalse(form_invalid.is_valid())
+        self.assertEqual(
+            form_invalid.errors['email'],
+            ['This email is already registered. Please try to login or use a different email.']
+        )
 
     def test_user_register_form_not_valid(self):
         form = UserRegisterForm(data={})

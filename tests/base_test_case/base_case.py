@@ -17,7 +17,8 @@ class BaseTestCase(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         # Created objects
-        cls.avatar = Pictures.objects.create(picture='test_pic.jpg')
+        cls.picture = Pictures.objects.create(picture='test_pic.jpg')
+        cls.avatar = Pictures.objects.create(avatar='test_avatar.jpg')
         cls.tag = Tag.objects.create(
             name='test_tag'
         )

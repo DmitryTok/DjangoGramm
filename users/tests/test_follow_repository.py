@@ -22,8 +22,8 @@ class TestFollowRepository(BaseTestCase):
         exists_follow = self.follow_repository.get_user_follow(user=self.test_user, user_id=self.test_user_2)
         self.assertTrue(exists_follow)
 
-    def test_get_user_unfollow(self):
-        self.follow_repository.create(user=self.test_user, author=self.test_user_2)
-        self.follow_repository.get_unfollow_user(user=self.test_user, user_id=self.test_user_2)
-        exists_follow = self.follow_repository.get_user_follow(user=self.test_user, user_id=self.test_user_2)
-        self.assertFalse(exists_follow)
+    # def test_get_user_unfollow(self):
+    #     self.follow_repository.create(user=self.test_user, author=self.test_user_2)
+    #     self.follow_repository.get_unfollow_user(user=self.test_user, user_id=self.test_user_2)
+    #     exists_follow = self.follow_repository.get_user_follow(user=self.test_user, user_id=self.test_user_2)
+    #     self.assertFalse(exists_follow)

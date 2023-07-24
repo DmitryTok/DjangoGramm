@@ -277,7 +277,6 @@ class UnfollowUser(View):
                 return JsonResponse({'message': 'You cannot unfollow yourself'}, status=HTTPStatus.BAD_REQUEST)
             elif follow_repository.get_user_follow(request.user, author):
                 follow_repository.delete_unfollow_user(request.user, author)
-                # TODO: Pass following in to request method
                 return JsonResponse(
                     {'message': f'Unfollow user {author.username}', 'user': author.username},
                     status=HTTPStatus.NO_CONTENT

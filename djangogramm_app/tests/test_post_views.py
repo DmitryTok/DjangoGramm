@@ -11,7 +11,7 @@ class TestPostViews(BaseTestCase):
             'user': cls.test_user,
             'text': 'Test post text',
             'pub_date': '2023-05-04 12:00:00',
-            'pictures': cls.avatar,
+            'pictures': cls.picture,
             'tags': cls.tag
         }
         cls.post = Post.objects.create(
@@ -19,7 +19,7 @@ class TestPostViews(BaseTestCase):
             text='Test post text',
             pub_date='2023-05-04 12:00:00'
         )
-        cls.post.pictures.add(cls.avatar)
+        cls.post.pictures.add(cls.picture)
         cls.post.tags.add(cls.tag)
         cls.post.likes.add(cls.test_user)
         cls.post.dislikes.add(cls.test_user_2)
@@ -77,18 +77,14 @@ class TestPostViews(BaseTestCase):
 
     def test_post_like_POST(self):
         response = self.authorized_client.post(self.get_url(self.post_like, self.post.id))
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, self.get_url(self.home))
+        self.assertEqual(response.status_code, 200)
 
         anon_response = self.guest_client.post(self.get_url(self.post_like, self.post.id))
-        self.assertEqual(anon_response.status_code, 302)
-        self.assertRedirects(anon_response, self.get_url(self.login_url))
+        self.assertEqual(anon_response.status_code, 400)
 
     def test_post_dislike_POST(self):
         response = self.authorized_client.post(self.get_url(self.post_dislike, self.post.id))
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, self.get_url(self.home))
+        self.assertEqual(response.status_code, 200)
 
         anon_response = self.guest_client.post(self.get_url(self.post_dislike, self.post.id))
-        self.assertEqual(anon_response.status_code, 302)
-        self.assertRedirects(anon_response, self.get_url(self.login_url))
+        self.assertEqual(anon_response.status_code, 400)

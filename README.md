@@ -10,6 +10,7 @@
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![Ajax](https://img.shields.io/badge/Ajax-1572B6?style=for-the-badge&logo=ajax&logoColor=white)
 ![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![GitHub OAuth2](https://img.shields.io/badge/GitHub_OAuth2-<COLOR>?style=for-the-badge&logo=github)
 
 
 ## To run the project

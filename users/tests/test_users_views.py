@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.tokens import default_token_generator
 from django.core.paginator import Page
 from django.http import HttpRequest
@@ -31,7 +33,7 @@ class TestUsersViews(BaseTestCase):
         cls.profile_data = {
             'full_name': 'Updated Name',
             'bio': 'Updated bio.',
-            'avatar': 'updated_pic.jpg'
+            'avatar': 'image.jpg'
         }
         cls.test_request.user = cls.test_user_2
         cls.test_uid = str(cls.test_user.id)
@@ -153,22 +155,25 @@ class TestUsersViews(BaseTestCase):
         self.assertRedirects(anon_response, self.get_url(self.login_url))
 
     def test_follow_user_POST(self):
-        response = self.authorized_client.post(self.get_url(self.profile_follow, self.test_user.id))
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, self.get_url(self.profile_url, self.test_user.id))
+        response = self.authorized_client.post(self.get_url(self.profile_follow, self.test_user_2.id))
+        self.assertEqual(response.status_code, 201)
 
-        anon_response = self.guest_client.post(self.get_url(self.profile_follow, self.test_user.id))
-        self.assertEqual(anon_response.status_code, 302)
-        self.assertRedirects(anon_response, self.get_url(self.login_url))
+        anon_response = self.guest_client.post(self.get_url(self.profile_follow, self.test_user_2.id))
+        self.assertEqual(anon_response.status_code, 400)
+
+        anon_response_data = json.loads(anon_response.content.decode('utf-8'))
+        self.assertEqual(anon_response_data['message'], 'You must be logged in to view this page')
 
     def test_unfollow_user_POST(self):
-        response = self.authorized_client.post(self.get_url(self.profile_unfollow, self.test_user.id))
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, self.get_url(self.profile_url, self.test_user.id))
+        self.authorized_client.post(self.get_url(self.profile_follow, self.test_user_2.id))
+        response = self.authorized_client.post(self.get_url(self.profile_unfollow, self.test_user_2.id))
+        self.assertEqual(response.status_code, 204)
 
-        anon_response = self.guest_client.post(self.get_url(self.profile_unfollow, self.test_user.id))
-        self.assertEqual(anon_response.status_code, 302)
-        self.assertRedirects(anon_response, self.get_url(self.login_url))
+        anon_response = self.guest_client.post(self.get_url(self.profile_unfollow, self.test_user_2.id))
+        self.assertEqual(anon_response.status_code, 400)
+
+        anon_response_data = json.loads(anon_response.content.decode('utf-8'))
+        self.assertEqual(anon_response_data['message'], 'You must be logged in to view this page')
 
     def test_all_followers_user_GET(self):
         follow_repository = FollowRepository()
