@@ -9,6 +9,8 @@ services:
       POSTGRES_DB: test_djangogramm
     volumes:
       - test_db_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
     ports:
       - "5433:5433"
     networks:
